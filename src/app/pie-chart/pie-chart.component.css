@@ -1,0 +1,13 @@
+
+.arc:hover {
+    fill: brown;
+    color: aqua;
+    background-color: aqua;
+}
+
+polyline{
+    opacity: .3;
+    stroke: rgb(0, 0, 0);
+    stroke-width: 2px;
+    fill: none;
+}

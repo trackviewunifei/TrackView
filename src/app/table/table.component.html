@@ -1,0 +1,13 @@
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th *ngFor="let head of headElements" scope="col">{{head}} </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let el of dados" scope="row">
+      <td>{{el[0]}}</td>
+      <td>{{el[1]}}</td>
+    </tr>
+  </tbody>
+</table>

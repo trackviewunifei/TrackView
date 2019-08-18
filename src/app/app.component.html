@@ -1,21 +1,99 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="container">
+  <select (change)="onChange($event)">
+    <option>Dashboard 1</option>
+    <option>Dashboard 2</option>
+    <option>Dashboard 3</option>
+  </select>
+  <div class="row">
+    <ng-container *ngIf="dash1; else Dash2">
+      <div class="col-sm-10 col-md-6 col-lg-5">
+        <div class="card text-white border-info bg-dark mb-3">
+          <app-line-chart [data]="lineData | async"></app-line-chart>
+          <div class="card-body">
+            <h5 class="card-title text-center">Gráfico de Linha </h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-10 col-md-6 col-lg-5">
+        <div class="card text-white border-info bg-dark mb-3">
+          <app-donut-chart [dados]="dados" [query]="consulta" [data]="data | async"  [myData]="myData | async"></app-donut-chart>
+          <div class="card-body">
+            <h5 class="card-title text-center">Gráfico de Donut</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-10 col-md-6 col-lg-5">
+        <div class="card text-white border-info bg-dark mb-3">
+          <app-bubble-chart [query]="consulta1"></app-bubble-chart>
+          <div class="card-body">
+            <h5 class="card-title text-center">Gráfico Area </h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-10 col-md-6 col-lg-5">
+        <div class="card text-white border-info bg-dark mb-3">
+          <app-bullet-chart [dados]="dados" [query]="consulta"></app-bullet-chart>
+          <div class="card-body">
+            <h5 class="card-title text-center">Gráfico Bullet </h5>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #Dash2>
+      <ng-container *ngIf="dash2; else Dash3">
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-pie-chart [dados]="dados" [query]="consulta" [data]="data | async" [myData]="myData | async"></app-pie-chart>
+            <div class="card-body">
+              <h5 class="card-title text-center">Gráfico de Pizza</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-radar-chart [query]="consulta"></app-radar-chart>
+            <div class="card-body">
+              <h5 class="card-title text-center">Gráfico Radar </h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-graf1 [dados]="dados" [query]="consulta" [data]="data | async" [myData]="myData | async"></app-graf1>
+            <div class="card-body">
+              <h5 class="card-title text-center">Gráfico de Barras</h5>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-template>
+    <ng-template #Dash3>
+      <ng-container *ngIf="dash3">
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-graf1 [dados]="dados" [query]="consulta" [data]="data | async" [myData]="myData | async"></app-graf1>
+            <div class="card-body">
+              <h5 class="card-title text-center">Gráfico de Barras</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-donut-chart [dados]="dados" [query]="consulta" [data]="data | async"  [myData]="myData | async"></app-donut-chart>
+            <div class="card-body">
+              <h5 class="card-title text-center">Gráfico de Donut</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-10 col-md-6 col-lg-5">
+          <div class="card text-white border-info bg-dark mb-3">
+            <app-table [dados]="dados"></app-table>
+          </div>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
 <router-outlet></router-outlet>
