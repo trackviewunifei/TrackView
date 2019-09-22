@@ -13,26 +13,31 @@ export class LineChartComponent implements OnChanges{
   @ViewChild('chart')
   private chartContainer: ElementRef;
 
-    private host: any;
-    private svg: any;
-    private width: number;
-    private height: number;
-    private htmlElement: HTMLElement;
-    private xScale: any;
-    private yScale: any;
-    private line: any;
-    private dataset: any;
-    private tipos: string[];
+  private host: any;
+  private svg: any;
+  private width: number;
+  private height: number;
+  private htmlElement: HTMLElement;
+  private xScale: any;
+  private yScale: any;
+  private line: any;
+  private dataset: any;
+  
+  @Input()
+  private tipos: string[];
 
   @Input()
   data: LineModel[];
 
-  margin = {top: 40, right: 40, bottom: 70, left: 40};
+  @Input()
+  dados:any [];
+
+  margin = {top: 40, right: 20, bottom: 60, left: 40};
 
   constructor() { }
 
   ngOnChanges(): void {
-    if (!this.data) { return; }
+    if (!this.dados || !this.tipos) { return; }
     this.htmlElement = this.chartContainer.nativeElement;
     this.host = d3.select(this.htmlElement);
     this.setup();
@@ -43,23 +48,23 @@ export class LineChartComponent implements OnChanges{
   private setup(): void {
     this.width = this.htmlElement.offsetWidth - this.margin.left - this.margin.right;
     this.height = 250 - this.margin.top - this.margin.bottom;
-    
-    this.tipos = ["X", "Y", "Z"];
+
     this.dataset = this.tipos.map((nomeTipo)=>{
       return{
         name:nomeTipo,
-        values:this.data.map(function(d){
-          if(nomeTipo == "X")
-            return {mes: d.mes, value:+d.x};
-          else if(nomeTipo == "Y")
-            return {mes: d.mes, value:+d.y};
-          else return {mes: d.mes, value:+d.z};
+        values:this.dados.map((d)=>{
+          var indice = this.tipos.indexOf(nomeTipo);
+          if(indice == 0)
+            return {data: d[0], value:+d[indice+1]};
+          else if(indice == 1)
+            return {data: d[0], value:+d[indice+1]};
+          else return {data: d[0], value:+d[indice+1]};
         })
       };
     });
-    //console.log(this.dataset);
+    console.log(this.dataset);
     this.xScale = d3.scalePoint()
-        .domain(this.data.map(d => {return d.mes;}))
+        .domain(this.dados.map(d => {return d[0];}))
         .range([0, this.width]);
     
     this.yScale = d3.scaleLinear()
@@ -96,7 +101,7 @@ export class LineChartComponent implements OnChanges{
 
     this.line = d3.line()
        // @ts-ignore
-        .x( (d) => { return this.xScale(d.mes);})
+        .x( (d) => { return this.xScale(d.data);})
         // @ts-ignore
         .y( (d) => { return this.yScale(d.value); });
     
@@ -120,11 +125,11 @@ export class LineChartComponent implements OnChanges{
           .data((d)=>{return d.values;}) 
           .enter()
           .append("circle")
-            .attr("cx", (d) => { return this.xScale(d.mes); })
+            .attr("cx", (d) => { return this.xScale(d.data); })
             .attr("cy", (d) => { return this.yScale(d.value); })
             .attr("r", 3)
             .attr("stroke", "white");
-    
+    /*
     this.svg.selectAll("myLabels")
         .data(this.dataset)
         .enter()
@@ -132,23 +137,24 @@ export class LineChartComponent implements OnChanges{
           .append("text")
             .attr("class", (d)=>{ return d.name })
             .datum((d) =>{ return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only the last value of each time sery
-            .attr("transform", (d)=> { return "translate(" + this.xScale(d.value.mes) + "," + this.yScale(d.value.value) + ")"; }) // Put the text at the position of the last point
+            .attr("transform", (d)=> { return "translate(" + this.xScale(d.value.data) + "," + this.yScale(d.value.value) + ")rotate(-45)"; }) // Put the text at the position of the last point
             .attr("x", 12) // shift the text a bit more right
+            .attr("y", (d, i)=> -8*i)
             .text((d) =>{ return d.name; })
             .style("fill", (d)=>{ return myColor(d.name) })
-            .style("font-size", 15)
-      
+            .style("font-size", 10)
+      */
           // Add a legend (interactive)
     this.svg.selectAll("myLegend")
         .data(this.dataset)
         .enter()
           .append('g')
           .append("text")
-            .attr('x', (d,i)=>{ return 30 + i*30})
-            .attr('y', -10)
+            .attr('x', (d,i)=>{ return 10 + i*50})
+            .attr('y', (d,i)=> -13*i)
             .text((d)=> { return d.name; })
             .style("fill", (d)=>{ return myColor(d.name) })
-            .style("font-size", 15)
+            .style("font-size", 12)
           .on("click", (d)=>{
             var currentOpacity = d3.selectAll("." + d.name).style("opacity")
             // @ts-ignore
@@ -165,9 +171,9 @@ export class LineChartComponent implements OnChanges{
   }
 
   private MaxOf3(){
-    var max_x = d3.max(this.data, d => {return d.x;});
-    var max_y = d3.max(this.data, d => {return d.y;});
-    var max_z = d3.max(this.data, d => {return d.z;});
+    var max_x = d3.max(this.dados, d => {return d[1];});
+    var max_y = d3.max(this.dados, d => {return d[2];});
+    var max_z = d3.max(this.dados, d => {return d[3];});
     if(max_x >= max_y){
       if(max_x >= max_z) return max_x;
       else return max_z;

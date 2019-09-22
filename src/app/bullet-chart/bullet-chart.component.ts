@@ -75,11 +75,19 @@ export class BulletChartComponent implements OnChanges {
     // add the x Axis
     g.append("g")
       .attr("transform", "translate(0," + contentHeight + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-30)")
+        .style("text-anchor", "end")
+        .style("font-size", 10);
 
     // add the y Axis
     g.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-30)")
+        .style("text-anchor", "end")
+        .style("font-size", 10);
 
     svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")

@@ -11,9 +11,9 @@ export class DadosService {
   dadoAtual = this.dados.asObservable();
   
   private query;
-  private url = 'bolt://localhost:7687';
-  private username = 'admin';
-  private password = 'admin';
+  private url = 'bolt://footstep.io::7687';
+  private username = 'neo4j';
+  private password = 'senha';
   private encrypted = false;
 
 
@@ -37,15 +37,12 @@ export class DadosService {
           if (driver) {}
         });
         try{
-          response = await this.neo4j.run(this.query);
-          //this.neo4j.disconnect();
+          response = this.neo4j.run(this.query);
         }catch(err){
           console.log(err);
         }finally{
           //this.neo4j.disconnect();
         }
-        
-    //this.neo4j.disconnect();
     return response;
   }
 

@@ -13,7 +13,10 @@ import { LineChartComponent } from './line-chart/line-chart.component';
 import { RadarChartComponent } from './radar-chart/radar-chart.component';
 import {DadosService} from './dados.service';
 import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
-import { TableComponent } from './table/table.component'
+import { TableComponent } from './table/table.component';
+import { Dashboard1Component } from './dashboard1/dashboard1.component';
+import { Dashboard2Component } from './dashboard2/dashboard2.component';
+import { Dashboard3Component } from './dashboard3/dashboard3.component'
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { TableComponent } from './table/table.component'
     LineChartComponent,
     RadarChartComponent,
     BubbleChartComponent,
-    TableComponent
+    TableComponent,
+    Dashboard1Component,
+    Dashboard2Component,
+    Dashboard3Component
   ],
   imports: [
     BrowserModule,

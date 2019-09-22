@@ -5,11 +5,13 @@
     <option>Dashboard 2</option>
     <option>Dashboard 3</option>
   </select>
+  <app-dashboard1></app-dashboard1>
+  <!--
   <div class="row">
     <ng-container *ngIf="dash1; else Dash2">
       <div class="col-sm-10 col-md-6 col-lg-5">
         <div class="card text-white border-info bg-dark mb-3">
-          <app-line-chart [data]="lineData | async"></app-line-chart>
+          <app-line-chart [dados]="grafLinha" [tipos]="nomesLinhas" [data]="lineData | async"></app-line-chart>
           <div class="card-body">
             <h5 class="card-title text-center">Gráfico de Linha </h5>
           </div>
@@ -25,7 +27,7 @@
       </div>
       <div class="col-sm-10 col-md-6 col-lg-5">
         <div class="card text-white border-info bg-dark mb-3">
-          <app-bubble-chart [query]="consulta1"></app-bubble-chart>
+          <app-bubble-chart [data]="grafArea" [query]="consulta1"></app-bubble-chart>
           <div class="card-body">
             <h5 class="card-title text-center">Gráfico Area </h5>
           </div>
@@ -52,7 +54,7 @@
         </div>
         <div class="col-sm-10 col-md-6 col-lg-5">
           <div class="card text-white border-info bg-dark mb-3">
-            <app-radar-chart [query]="consulta"></app-radar-chart>
+            <app-radar-chart [data]="grafRadar" [query]="consulta"></app-radar-chart>
             <div class="card-body">
               <h5 class="card-title text-center">Gráfico Radar </h5>
             </div>
@@ -94,6 +96,7 @@
       </ng-container>
     </ng-template>
   </div>
+  -->
 </div>
 
 <router-outlet></router-outlet>

@@ -14,7 +14,10 @@ export class BubbleChartComponent implements OnChanges {
 
   @Input()
   query: string;
- 
+  
+  @Input()
+  data:any[] = [];
+
   private dados:any[] = [];
 
   margin = {top: 20, right: 20, bottom: 40, left: 50};
@@ -41,79 +44,63 @@ export class BubbleChartComponent implements OnChanges {
     const contentHeight = 250 - this.margin.top - this.margin.bottom;
 
     var color = d3.scaleOrdinal()//Define as cores
-      .domain(["PVkW", "TBLkW"])
+      .domain(["Eventos", "Média de Eventos"])
       .range(["rgba(249, 208, 87, 0.7)", "rgba(54, 174, 175, 0.65)"]);
     
-    var parseDate = d3.timeParse("%Y/%m/%d %H:%M");//Define questoes de hora para a manipulacao do eixo x
-    var x = d3.scaleTime().range([0, contentWidth]),
-      y = d3.scaleLinear().range([contentHeight, 0]),
-      z = color;
-    
-    d3.csv("../../assets/area.csv").then((data)=> {//Le o csv
-      data.forEach(element => {//para cada elemento vindo do csv ira
-        // @ts-ignore
-        element.date = parseDate(element.date);
-        // @ts-ignore
-        element.PVkW = parseInt(element.PVkW);
-        // @ts-ignore
-        element.TBLkW = parseInt(element.TBLkW); 
-      }); 
-      var sources = data.columns.slice(1).map((id)=> {//fara a uniao dos valores para cada tipo
-        return {//tendo assim um array de objetis [{tipos, [datas]},...]
-          id: id,
-          values: data.map((d)=> {
-            return {date: d.date, kW: d[id]};
-          })
-        };
-      });
+    var x = d3.scalePoint().rangeRound([0, contentWidth]),
+      y = d3.scaleLinear().rangeRound([contentHeight, 0]);
       
-      //console.log(sources);
-      // @ts-ignore
-      x.domain(d3.extent(data, (d)=> { return d.date; }));
-      y.domain([
-        0,
-        // @ts-ignore
-        d3.max(sources, (c)=> { return d3.max(c.values, (d)=> { return d.kW; }); })
-      ]);
-      z.domain(sources.map((c)=> { return c.id; }));
-    
-      g.append("g")//Atribui os valores ao eixo horizontal
-          .attr("class", "axis axis--x")
-          .attr("transform", "translate(0," + contentHeight + ")")
-          .call(d3.axisBottom(x))
-          .selectAll("text")
-          .attr("transform", "translate(-10,0)rotate(-45)")
-          .style("text-anchor", "end")
-          .style("font-size", 10);
-    
-      g.append("g")//Atribui os valores ao eixo vertical
-          .attr("class", "axis axis--y")
-          .call(d3.axisLeft(y))
-        .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", "0.71em")
-          .attr("fill", "gray")
-          .text("Power, kW");
-    
-      var source = g.selectAll(".area")
-          .data(sources)
-          .enter().append("g")
-          .attr("class", (d)=> { return `area ${d.id}`; })
-    
-      source.append("path")
+    if(!this.data)
+      return;
+      
+    // @ts-ignore
+    x.domain(this.data.map((d) => d[0]));
+    y.domain([0, d3.max(this.data, (d) => d[1])]);
+  
+    g.append("g")//Atribui os valores ao eixo horizontal
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + contentHeight + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-30)")
+        .style("text-anchor", "end")
+        .style("font-size", 10);
+  
+    g.append("g")//Atribui os valores ao eixo vertical
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("fill", "gray")
+        .text("Acessos");
+
+    g.append("path")
+      .datum(this.data)
+          // @ts-ignore
+          .attr("d", d3.area()
+            .curve(d3.curveMonotoneX)
             // @ts-ignore
-            .attr("d", (d)=> { return area(d.values); })
+            .x((d)=> x(d[0]))
+            .y0(y(0))
             // @ts-ignore
-            .style("fill", (d)=> { return z(d.id); });
-    });
-    var area = d3.area()
-      .curve(d3.curveMonotoneX)
-      // @ts-ignore
-      .x((d)=> { return x(d.date); })
-      .y0(y(0))
-      // @ts-ignore
-      .y1((d)=> { return y(d.kW); });
+            .y1((d)=> y(d[1])))
+          // @ts-ignore
+          .style("fill", "rgba(249, 208, 87, 0.7)");
+    
+    g.append("path")
+      .datum(this.data)
+          // @ts-ignore
+          .attr("d", d3.area()
+            .curve(d3.curveMonotoneX)
+            // @ts-ignore
+            .x((d)=> x(d[0]))
+            .y0(y(0))
+            // @ts-ignore
+            .y1((d)=> y(d[2])))
+          // @ts-ignore
+          .style("fill", "rgba(54, 174, 175, 0.65)");
   }
 }
 

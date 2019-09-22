@@ -15,6 +15,9 @@ export class RadarChartComponent implements OnChanges {
   @Input()
   query: string;
 
+  @Input()
+  private data:any[] = [];
+
   constructor() { }
 
   ngOnChanges() {
@@ -22,13 +25,17 @@ export class RadarChartComponent implements OnChanges {
   }
 
   createChart():void{
+    if(!this.data)
+      return;
+
     const diameter = 600;
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     var margin = { top: 50, right: 80, bottom: 50, left: 80 },
     width = Math.min(700, window.innerWidth / 4) - margin.left - margin.right,
     height = Math.min(width, window.innerHeight - margin.top - margin.bottom);
-    var data = [
+    var data = this.data;
+    /*var data = [
       { name: 'Página 1',
         axes: [
           {axis: 'Conversão', value: 42},
@@ -59,7 +66,7 @@ export class RadarChartComponent implements OnChanges {
         ],
        color: '#2a2fd4'
       }
-    ];
+    ];*/
     
     var radarChartOptions2 = {
       w: 290,
