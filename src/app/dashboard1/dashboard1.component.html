@@ -1,0 +1,35 @@
+
+ <div class="row">
+  <div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-line-chart [dados]="grafLinha" [tipos]="nomesLinhas"></app-line-chart>
+      <div class="card-body">
+        <h5 class="card-title text-center">Gráfico de Linha </h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-donut-chart [dados]="dados"></app-donut-chart>
+      <div class="card-body">
+        <h5 class="card-title text-center">Gráfico de Donut</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-bubble-chart [data]="grafArea"></app-bubble-chart>
+      <div class="card-body">
+        <h5 class="card-title text-center">Gráfico Area </h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-10 col-md-6 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-bullet-chart [dados]="dados"></app-bullet-chart>
+      <div class="card-body">
+        <h5 class="card-title text-center">Gráfico Bullet </h5>
+      </div>
+    </div>
+  </div>
+ </div>

@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-10 col-md-6 col-lg-5">
+      <div class="card text-white border-info bg-dark mb-3">
+        <app-graf1 [dados]="dados" [query]="consulta" [data]="data | async" [myData]="myData | async"></app-graf1>
+        <div class="card-body">
+          <h5 class="card-title text-center">Gráfico de Barras</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-10 col-md-6 col-lg-5">
+      <div class="card text-white border-info bg-dark mb-3">
+        <app-donut-chart [dados]="dados" [query]="consulta" [data]="data | async"  [myData]="myData | async"></app-donut-chart>
+        <div class="card-body">
+          <h5 class="card-title text-center">Gráfico de Donut</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-10 col-md-6 col-lg-5">
+      <div class="card text-white border-info bg-dark mb-3">
+        <app-table [dados]="dados"></app-table>
+      </div>
+    </div>
+  </div>
+</div>
