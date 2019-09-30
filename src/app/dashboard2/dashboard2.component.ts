@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { AngularNeo4jService } from 'angular-neo4j';
 import { DadosService } from './../dados.service';
 
@@ -7,10 +7,19 @@ import { DadosService } from './../dados.service';
   templateUrl: './dashboard2.component.html',
   styleUrls: ['./dashboard2.component.css']
 })
-export class Dashboard2Component implements OnInit {
+export class Dashboard2Component implements OnChanges {
 
   //Variáveis que resultaram nos gráficos
   private grafRadar:any[];
+  private grafPizza:any[];
+  private grafBar:any[];
+  private grafLine:any[];
+  private nomesLinhas:string[] = [];
+  private grafLinha:any[];
+  private card1:string[];
+  private card2:string[];
+  private card3:string[];
+  private card4:string[];
 
   //Variáveis auxiliares
   private radar:any[];
@@ -18,49 +27,85 @@ export class Dashboard2Component implements OnInit {
   private cons2:any[];
   private cons3:any[];
   private cons4:any[];
-  private  consulta: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
+  private linha:any[];
+  private consulta: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
   private dados:any[];
 
   constructor(private neo4j: AngularNeo4jService, private _dados: DadosService) { 
     this.obDados();
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.obDados();
   }
 
   private async obDados(){
-    await this.obtemDados(this.consulta, true);
+    await this.obtemDados(this.consulta);
     //await this.obtemDados(this.consulta1, false);
     //await this.obtemDados(this.consulta2);
     this._dados.closeConnection();
   }
 
-  private async obtemDados(consulta :string, opt: boolean){
-    if(opt == false){
-      this.dados = await this._dados.getDados(consulta);
-      //console.log(this.dados);
-     
-    }else{
-      this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
-      this.cons2 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-      this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-      this.cons4 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-      this.dados = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return e.client_id, e.date_str as data order by data");
-      this.radar = [];
-      this.uneRadar("Pagina", '#26AF32');
+  private async obtemDados(consulta :string){
 
-      this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
-      this.uneRadar("Pagina 2", '#762712');
+    this.ajustaCard("Acessos", "42 Acessos", " test1",1);
+    this.ajustaCard("Aoba", "2 Acessos", " test2",2);
+    this.ajustaCard("Páginas", "31 Acessos", " teste3",3);
+    this.ajustaCard("Users", "32 Acessos", " teste4",4);
 
-      this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-      this.uneRadar("Pagina 3", '#2a2fd4');
-      this.grafRadar = this.radar;
-      console.log(this.grafRadar);
-      this.ajustaDataRadar();
-      this.dados = await this._dados.getDados(consulta);
-    }
+    this.grafPizza = await this._dados.getDados(consulta);
+    this.grafBar = await this._dados.getDados(consulta);
+    this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
+    this.ajustaArrayLinha();
+    this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
+    this.cons2 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
+    this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
+    this.cons4 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
+    this.dados = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return e.client_id, e.date_str as data order by data");
+    this.radar = [];
+    this.uneRadar("Pagina", '#26AF32');
+
+    this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
+    this.uneRadar("Pagina 2", '#762712');
+
+    this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
+    this.uneRadar("Pagina 3", '#2a2fd4');
+    this.grafRadar = this.radar;
+    console.log(this.grafRadar);
+    this.ajustaDataRadar();
   }
 
+  private ajustaArrayLinha(){
+    this.grafLinha = [];
+    var str:string[];
+    this.linha.forEach(element => {//Obtem os nomes dos navegadores
+      str = element[1].split("(");
+      str = str[1].split(";");
+      str = str[0].split(" ");
+      if(!this.nomesLinhas.includes(str[0]))
+        this.nomesLinhas.push(str[0]);
+    });
+
+    this.linha.forEach(element => {
+      if(!this.grafLinha.find(ele => ele[0] == element[0])){  
+        var obj:any[] = [];
+        obj.push(element[0]);
+        obj.push(0);
+        obj.push(0);
+        obj.push(0);
+        for(var i = this.linha.indexOf(element); i < this.linha.length; i++){
+          if(element[0] == this.linha[i][0]){
+            str = this.linha[i][1].split("(");
+            str = str[1].split(";");
+            str = str[0].split(" ");
+            obj[this.nomesLinhas.indexOf(str[0])+1] = this.linha[i][2];
+          }
+        }
+        this.grafLinha.push(obj);
+      }
+    });
+    console.log(this.grafLinha);
+  }
   
   private ajustaDataRadar(){
     var cont = 0;
@@ -115,5 +160,21 @@ export class Dashboard2Component implements OnInit {
     this.radar.push(obj);
   }
   
+  private ajustaCard(nomeCard:string, valorCard:string, attExtra:string, cardOpt){
+    var lista:string[] = [];
+    
+    lista.push(nomeCard);
+    lista.push(valorCard);
+    lista.push(attExtra);
+
+    if(cardOpt == 1)
+      this.card1 = lista;
+    else if(cardOpt == 2)
+      this.card2 = lista;
+    else if(cardOpt == 3)
+      this.card3 = lista;
+    else
+      this.card4 = lista;
+  }
 
 }

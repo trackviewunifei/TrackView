@@ -1,7 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
-import { DataModel, MyDataModel } from 'src/app/data/data.model';
-import { DadosService } from '../dados.service';
 
 @Component({
   selector: 'app-pie-chart',
@@ -24,26 +22,18 @@ export class PieChartComponent implements OnChanges {
   
   @Input()
   private dados:any[] = [];
- 
-  @Input()
-  data: DataModel[];
-  @Input()
-  myData: MyDataModel[];
-  @Input()
-  query: string;
 
   margin = {top: 30, right: 20, bottom: 30, left: 40};
 
-  constructor(private _dados: DadosService) { }
+  constructor() { }
   
   ngOnChanges(): void {
     this.createChart();
   }
 
   private createChart(){
-    //this.dados = await this._dados.getDados(this.query);
-    if (!this.dados) { return; }
-    //console.log("Dados originais: "+this.dados);
+    if (!this.dados) 
+     return;
     
     this.htmlElement = this.chartContainer.nativeElement;
     this.host = d3.select(this.htmlElement);

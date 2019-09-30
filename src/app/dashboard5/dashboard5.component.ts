@@ -1,65 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { AngularNeo4jService } from 'angular-neo4j';
-import { DadosService } from './../dados.service';
+import { DadosService } from '../dados.service';
 
 @Component({
-  selector: 'app-dashboard1',
-  templateUrl: './dashboard1.component.html',
-  styleUrls: ['./dashboard1.component.css']
+  selector: 'app-dashboard5',
+  templateUrl: './dashboard5.component.html',
+  styleUrls: ['./dashboard5.component.css']
 })
-export class Dashboard1Component implements OnInit {
+export class Dashboard5Component implements OnChanges {
 
   //Variáveis que resultaram nos gráficos
-  private grafDonut:any[];
-  private grafBar:any[];
-  private grafArea:any[];
+  private grafBullet:any[];
   private grafLine:any[];
-
+  private nomesLinhas:string[] = [];
+  private grafLinha:any[];
+  private grafArea:any[];
+  
   //Variáveis auxiliares
-  private consultaBar: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
-  private consultaDonut: string = "match (c:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str =~ '.*2019-09-20.*' and p.id = 'guilheeeeeeerme.github.io/footstep' return u.id, count(distinct c) as qtdUsers";
+  private  consulta: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
+  private dados:any[];
+  private card1:string[];
+  private card2:string[];
+  private card3:string[];
+  private card4:string[];
   private consultaArea1: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) where e.date_str =~ '.*2019-09-20.*' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, right(left(e.date_str, 13),2) as data, count(distinct u) as qtdUsers order by data";
   private consultaArea2: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) where e.date_str =~ '.*2019-09.*' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, right(left(e.date_str, 13),2) as data, count(distinct u) as qtdUsers order by data";
-  
   private area1:any[];
   private area2:any[];
-  private dados:any[];
-  /*
   private linha:any[];
-  private nomesLinhas:string[];
-  */
+
   constructor(private neo4j: AngularNeo4jService, private _dados: DadosService) { 
     this.obDados();
   }
 
-  ngOnInit() {
+  ngOnChanges() {
   }
 
   private async obDados(){
-    await this.obtemDados();
+    await this.obtemDados(this.consulta);
     this._dados.closeConnection();
   }
 
-  private async obtemDados(){
-      this.grafDonut = await this._dados.getDados(this.consultaDonut);
-      this.grafBar = await this._dados.getDados(this.consultaBar);
-      this.area1 = await this._dados.getDados(this.consultaArea1);
+  private async obtemDados(consulta :string){
+
+    this.ajustaCard("Acessos", "42 Acessos", " test1",1);
+    this.ajustaCard("Aoba", "2 Acessos", " test2",2);
+    this.ajustaCard("Páginas", "31 Acessos", " teste3",3);
+    this.ajustaCard("Users", "32 Acessos", " teste4",4);
+    this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
+    this.ajustaArrayLinha();
+    this.dados = await this._dados.getDados(consulta);
+
+    this.area1 = await this._dados.getDados(this.consultaArea1);
       this.area2 = await this._dados.getDados(this.consultaArea2);
       this.uneArrayArea();
-      /*
-      this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
-      this.ajustaArrayLinha();
-      this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
-      */
-      
-  }
-
-  private ajusteDonut(){
-
-  }
-
-  private AjustaBar(){
     
+  }
+
+  private ajustaCard(nomeCard:string, valorCard:string, attExtra:string, cardOpt){
+    var lista:string[] = [];
+    
+    lista.push(nomeCard);
+    lista.push(valorCard);
+    lista.push(attExtra);
+
+    if(cardOpt == 1)
+      this.card1 = lista;
+    else if(cardOpt == 2)
+      this.card2 = lista;
+    else if(cardOpt == 3)
+      this.card3 = lista;
+    else
+      this.card4 = lista;
   }
 
   private ajustaArrayArea(hora){
@@ -77,6 +89,7 @@ export class Dashboard1Component implements OnInit {
     }
   }
   
+
   private uneArrayArea(){
     this.grafArea = [];
     this.ajustaArrayArea(23);
@@ -90,11 +103,9 @@ export class Dashboard1Component implements OnInit {
     });
   }
 
-  /*
   private ajustaArrayLinha(){
-    this.grafLine = [];
+    this.grafLinha = [];
     var str:string[];
-    this.nomesLinhas = [];
     this.linha.forEach(element => {//Obtem os nomes dos navegadores
       str = element[1].split("(");
       str = str[1].split(";");
@@ -104,7 +115,7 @@ export class Dashboard1Component implements OnInit {
     });
 
     this.linha.forEach(element => {
-      if(!this.grafLine.find(ele => ele[0] == element[0])){  
+      if(!this.grafLinha.find(ele => ele[0] == element[0])){  
         var obj:any[] = [];
         obj.push(element[0]);
         obj.push(0);
@@ -118,10 +129,10 @@ export class Dashboard1Component implements OnInit {
             obj[this.nomesLinhas.indexOf(str[0])+1] = this.linha[i][2];
           }
         }
-
-        this.grafLine.push(obj);
+        this.grafLinha.push(obj);
       }
     });
+    console.log(this.grafLinha);
   }
-  */
+
 }

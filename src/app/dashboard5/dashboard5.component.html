@@ -15,28 +15,30 @@
 
     <div class="col-sm-10 col-md-6 col-lg-6">
       <div class="card text-white border-info bg-dark mb-3">
-        <app-graf1 [dados]="dados"></app-graf1>
-        <div class="card-body">
-          <h5 class="card-title text-center">Gráfico de Barras</h5>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-10 col-md-6 col-lg-6">
-      <div class="card text-white border-info bg-dark mb-3">
-        <app-donut-chart [dados]="dados"></app-donut-chart>
-        <div class="card-body">
-          <h5 class="card-title text-center">Gráfico de Donut</h5>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-12 col-md-12 col-lg-12">
-      <div class="card text-white border-info bg-dark mb-3">
         <app-line-chart [dados]="grafLinha" [tipos]="nomesLinhas"></app-line-chart>
         <div class="card-body">
           <h5 class="card-title text-center">Gráfico de Linha </h5>
         </div>
       </div>
+    </div>
+
+    <div class="col-sm-10 col-md-6 col-lg-6">
+      <div class="card text-white border-info bg-dark mb-3">
+        <app-pie-chart [dados]="dados"></app-pie-chart>
+        <div class="card-body">
+          <h5 class="card-title text-center">Gráfico de Pizza</h5>
+        </div>
+      </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-bubble-chart [data]="grafArea"></app-bubble-chart>
+      <div class="card-body">
+        <h5 class="card-title text-center">Distribuição das horas dos acessos</h5>
+      </div>
+    </div>
+  </div>
+
     </div>
 
   </div>

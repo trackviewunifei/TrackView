@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
-import { LineModel } from 'src/app/data/data.model';
 
 @Component({
   selector: 'app-line-chart',
@@ -27,9 +26,6 @@ export class LineChartComponent implements OnChanges{
   private tipos: string[];
 
   @Input()
-  data: LineModel[];
-
-  @Input()
   dados:any [];
 
   margin = {top: 40, right: 20, bottom: 60, left: 40};
@@ -37,7 +33,8 @@ export class LineChartComponent implements OnChanges{
   constructor() { }
 
   ngOnChanges(): void {
-    if (!this.dados || !this.tipos) { return; }
+    if (!this.dados || !this.tipos) 
+      return;
     this.htmlElement = this.chartContainer.nativeElement;
     this.host = d3.select(this.htmlElement);
     this.setup();

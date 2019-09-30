@@ -1,7 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
-import { DataModel, MyDataModel } from 'src/app/data/data.model';
-import { DadosService } from '../dados.service';
 
 @Component({
   selector: 'app-bullet-chart',
@@ -15,23 +13,19 @@ export class BulletChartComponent implements OnChanges {
   private chartContainer: ElementRef;
 
   @Input()
-  query: string;
-  @Input()
   private dados:any[] = [];
 
   margin = {top: 20, right: 20, bottom: 40, left: 70};
 
-  constructor(private _dados: DadosService) { }
+  constructor() { }
 
   ngOnChanges(): void {
-    //this._dados.dadoAtual.subscribe(dadoNovo => this.dados = dadoNovo);
     this.createChart();
   }
 
   private createChart(){
-    //this.dados = await this._dados.getDados(this.query);
-    if (!this.dados) { return; }
-    //console.log("Dados originais: "+this.dados);
+    if (!this.dados) 
+      return; 
     
     const element = this.chartContainer.nativeElement;
     const data = this.dados;

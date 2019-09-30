@@ -1,15 +1,16 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { AngularNeo4jService } from 'angular-neo4j';
-import { DadosService } from './../dados.service';
+import { DadosService } from '../dados.service';
+
 @Component({
-  selector: 'app-dashboard3',
-  templateUrl: './dashboard3.component.html',
-  styleUrls: ['./dashboard3.component.css']
+  selector: 'app-dashboard4',
+  templateUrl: './dashboard4.component.html',
+  styleUrls: ['./dashboard4.component.css']
 })
-export class Dashboard3Component implements OnChanges {
+export class Dashboard4Component implements OnChanges {
 
   //Variáveis que resultaram nos gráficos
-  private grafBar:any[];
+  private grafBullet:any[];
   private grafLine:any[];
   private nomesLinhas:string[] = [];
   private grafLinha:any[];
@@ -95,6 +96,5 @@ export class Dashboard3Component implements OnChanges {
     });
     console.log(this.grafLinha);
   }
-  
 
 }

@@ -1,6 +1,5 @@
 import { Component, OnChanges, ViewChild, ElementRef, Input } from '@angular/core';
 import * as d3 from 'd3';
-import { DadosService } from '../dados.service';
 
 @Component({
   selector: 'app-bubble-chart',
@@ -11,9 +10,6 @@ export class BubbleChartComponent implements OnChanges {
 
   @ViewChild('chart')
   private chartContainer: ElementRef;
-
-  @Input()
-  query: string;
   
   @Input()
   data:any[] = [];
@@ -22,14 +18,12 @@ export class BubbleChartComponent implements OnChanges {
 
   margin = {top: 20, right: 20, bottom: 40, left: 50};
 
-  constructor(private _dados: DadosService) { }
+  constructor() { }
 
   ngOnChanges() {
     this.createChart();
   }
   private createChart(){
-    //this.dados = await this._dados.getDados(this.query);
-    //console.log(this.dados);
 
     const element = this.chartContainer.nativeElement;//recebe a div que contera o svg
     d3.select(element).select('svg').remove();
@@ -58,7 +52,7 @@ export class BubbleChartComponent implements OnChanges {
     y.domain([0, d3.max(this.data, (d) => d[1])]);
   
     g.append("g")//Atribui os valores ao eixo horizontal
-        .attr("class", "axis axis--x")
+        .attr("class", "x axis")
         .attr("transform", "translate(0," + contentHeight + ")")
         .call(d3.axisBottom(x))
         .selectAll("text")
@@ -70,7 +64,7 @@ export class BubbleChartComponent implements OnChanges {
         .attr("class", "axis axis--y")
         .call(d3.axisLeft(y))
       .append("text")
-        .attr("transform", "rotate(-90)")
+        .attr("transform", "rotate(90)")
         .attr("y", 6)
         .attr("dy", "0.71em")
         .attr("fill", "gray")

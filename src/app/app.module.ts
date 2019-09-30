@@ -16,7 +16,10 @@ import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
 import { TableComponent } from './table/table.component';
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
-import { Dashboard3Component } from './dashboard3/dashboard3.component'
+import { Dashboard3Component } from './dashboard3/dashboard3.component';
+import { CardComponent } from './card/card.component';
+import { Dashboard4Component } from './dashboard4/dashboard4.component';
+import { Dashboard5Component } from './dashboard5/dashboard5.component'
 
 @NgModule({
   declarations: [
@@ -31,7 +34,10 @@ import { Dashboard3Component } from './dashboard3/dashboard3.component'
     TableComponent,
     Dashboard1Component,
     Dashboard2Component,
-    Dashboard3Component
+    Dashboard3Component,
+    CardComponent,
+    Dashboard4Component,
+    Dashboard5Component
   ],
   imports: [
     BrowserModule,

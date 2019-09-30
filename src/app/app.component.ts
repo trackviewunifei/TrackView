@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { DataModel, MyDataModel, LineModel } from 'src/app/data/data.model';
 import { AngularNeo4jService } from 'angular-neo4j';
 import { DadosService } from './dados.service';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-root',
@@ -50,6 +51,7 @@ export class AppComponent {
   }
 
   private async obDados(){
+    this.leituraRespostasQuestionario();
     await this.obtemDados(this.consulta, true);
     //await this.obtemDados(this.consulta1, false);
     //await this.obtemDados(this.consulta2);
@@ -182,6 +184,33 @@ export class AppComponent {
     obj["color"] = color;
     this.radar.push(obj);
   } 
+
+  private leituraRespostasQuestionario(){
+    var objects:any[] = [];
+    var obj;
+    d3.csv("../../assets/form.csv").then((data)=> {//Le o csv
+      data.forEach(element => {//para cada elemento vindo do csv ira
+        obj = new Object();
+        //replace(/[\\"]/g, ''); possivel necessidade disso depois
+        obj["Time"] = element.Timestamp;
+        obj["Name"] = element.Name;
+        obj["Area"] = this.particionaPalavra(element.Area, ";");
+        obj["Technology"] = this.particionaPalavra(element.Technology, ";");
+        obj["Perfil"] = this.particionaPalavra(element.Perfil, ";");
+        objects.push(obj);
+      }); 
+    });
+    console.log(objects);
+  }
+
+  private particionaPalavra(palavra:string, split:string){
+    var stringSplit: string[] = palavra.split(split);
+    var item:string[] = [];
+    stringSplit.forEach(element => {
+      item.push(element);
+    });
+    return item;
+  }
 
   onChange(event){
     if(event.target.value == "Dashboard 1"){

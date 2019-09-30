@@ -1,7 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
-import { DataModel, MyDataModel } from 'src/app/data/data.model';
-import { DadosService } from '../dados.service';
 import * as d3tip from '../../assets/d3.tip.v0.7.1.js'
 
 @Component({
@@ -25,25 +23,18 @@ export class DonutChartComponent implements OnChanges{
   private tip:any;
 
   @Input()
-  data: DataModel[];
-  @Input()
-  myData: MyDataModel[];
-  @Input()
-  query: string 
-  @Input()
   dados:any[] = [];
   margin = {top: 10, right: 10, bottom: 10, left: 10};
 
-  constructor(private _dados: DadosService) { }
+  constructor() { }
 
   ngOnChanges(): void {
     this.createChart();
   }
 
   private createChart(){
-    //this.dados = await this._dados.getDados(this.query);
-    if (!this.dados) { return; }
-    //console.log("Dados originais: "+this.dados);
+    if (!this.dados) 
+      return;
     
     this.htmlElement = this.chartContainer.nativeElement;
     this.host = d3.select(this.htmlElement);
