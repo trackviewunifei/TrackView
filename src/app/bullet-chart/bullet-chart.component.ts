@@ -15,7 +15,13 @@ export class BulletChartComponent implements OnChanges {
   @Input()
   private dados:any[] = [];
 
-  margin = {top: 20, right: 20, bottom: 40, left: 70};
+  @Input()
+  private axisNames:string[] = [];
+
+  @Input()
+  private colors:string[] = [];
+
+  private margin = {top: 20, right: 20, bottom: 40, left: 100};
 
   constructor() { }
 
@@ -48,9 +54,15 @@ export class BulletChartComponent implements OnChanges {
       .range([contentHeight, 0])
       .padding(0.1)
       .domain(data.map((d, i) => this.dados[i][0]));
-
+    /*
     const colorScale = d3.scaleOrdinal(d3.schemePaired)
-      .domain([0, d3.max(data, (d, i) => this.dados[i][1])]);
+      .domain([0, d3.max(data, (d, i) => this.dados[i][1])]);*/
+
+    const colorScale = d3.scaleOrdinal()
+      .domain(["2", "1", "0"])
+      .range([this.colors[0], this.colors[1], this.colors[2]]);
+
+    const color:string[] = this.colors;
 
     const g = svg.append('g')
       .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
@@ -63,7 +75,7 @@ export class BulletChartComponent implements OnChanges {
         .attr("width", function(d) {return x(d[1]); } )
         .attr("y", function(d) { return y(d[0]); })
         .attr("height", y.bandwidth())
-        .style("fill", function (d, i) { return colorScale(d[1]); });
+        .style("fill", function (d, i) { return ""+colorScale(i+""); });
 
 
     // add the x Axis
@@ -73,30 +85,33 @@ export class BulletChartComponent implements OnChanges {
       .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-30)")
         .style("text-anchor", "end")
-        .style("font-size", 10);
+        .style("font-size", 10)
+        .style("fill", "#D7DBDD");
 
     // add the y Axis
     g.append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-30)")
+        .attr("transform", "translate(-10,0)rotate(-55)")
         .style("text-anchor", "end")
-        .style("font-size", 10);
+        .style("font-size", 10)
+        .style("fill",function (d, i) { return ""+colorScale(i+""); });
 
     svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
-        .attr("x", contentWidth+25)
+        .attr("x", contentWidth + 75)
         .attr("y", contentHeight + this.margin.top + 35)
-        .text("Produtos")
+        .text(this.axisNames[0])
         .style("font-size", 12)
         .style("fill", "#69a3b2");
 
     svg.append("text")//Coloca o que o eixo y representa
         .attr("text-anchor", "top")
         .attr("y", 15)
-        .attr("x", 15)
-        .text("Valor")
+        .attr("x", 55)
+        .text(this.axisNames[1])
         .style("font-size", 12)
         .style("fill", "#69a3b2");
   }
+  
 }

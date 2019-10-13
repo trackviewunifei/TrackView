@@ -28,7 +28,13 @@ export class LineChartComponent implements OnChanges{
   @Input()
   dados:any [];
 
-  margin = {top: 40, right: 20, bottom: 60, left: 40};
+  @Input()
+  private axisNames:string[] = [];
+
+  @Input()
+  private colors:string[] = [];
+
+  private margin = {top: 40, right: 20, bottom: 60, left: 40};
 
   constructor() { }
 
@@ -59,7 +65,7 @@ export class LineChartComponent implements OnChanges{
         })
       };
     });
-    console.log(this.dataset);
+    
     this.xScale = d3.scalePoint()
         .domain(this.dados.map(d => {return d[0];}))
         .range([0, this.width]);
@@ -78,11 +84,17 @@ export class LineChartComponent implements OnChanges{
   }
 
   private buildLine(): void {
+    /*
     var myColor = d3.scaleOrdinal()
       .domain(this.tipos)
       .range(d3.schemeCategory10);
+    */
 
-    this.svg.append("g")
+    var myColor = d3.scaleOrdinal()
+        .domain(this.tipos)
+        .range([this.colors[0], this.colors[2], this.colors[1]]);
+
+    this.svg.append("g")//Add x axis
         .attr("class", "x axis")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(this.xScale))
@@ -90,11 +102,14 @@ export class LineChartComponent implements OnChanges{
           .attr("transform", "translate(-10,10)rotate(-45)")
           .style("text-anchor", "end")
           .style("font-size", 10)
-          .style("fill", "#69a3b2");
+          .style("fill", "#D7DBDD");
 
-    this.svg.append("g")
+    this.svg.append("g")//Add y axis
         .attr("class", "y axis")
-        .call(d3.axisLeft(this.yScale));
+        .call(d3.axisLeft(this.yScale))
+        .selectAll("text")
+          .style("font-size", 10)
+          .style("fill","#D7DBDD");
 
     this.line = d3.line()
        // @ts-ignore
@@ -111,7 +126,7 @@ export class LineChartComponent implements OnChanges{
         .attr("stroke", (d)=>{return myColor(d.name);})
         .style("stroke-width", 4)
         .style("fill", "none");
-
+    /*
     this.svg.selectAll("myDots")
           .data(this.dataset)
           .enter()
@@ -126,6 +141,7 @@ export class LineChartComponent implements OnChanges{
             .attr("cy", (d) => { return this.yScale(d.value); })
             .attr("r", 3)
             .attr("stroke", "white");
+    */
     /*
     this.svg.selectAll("myLabels")
         .data(this.dataset)
@@ -147,7 +163,7 @@ export class LineChartComponent implements OnChanges{
         .enter()
           .append('g')
           .append("text")
-            .attr('x', (d,i)=>{ return 10 + i*50})
+            .attr('x', (d,i)=>{ return 50})
             .attr('y', (d,i)=> -13*i)
             .text((d)=> { return d.name; })
             .style("fill", (d)=>{ return myColor(d.name) })
@@ -157,13 +173,21 @@ export class LineChartComponent implements OnChanges{
             // @ts-ignore
             d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1)
         })
-    this.svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -this.margin.left+15)
-        .attr("x", -this.margin.top)
-        .text("Valor")
-        .style("font-size", 10)
+
+    this.svg.append("text")//Coloca o que o eixo x representa
+        .attr("text-anchor", "middle")
+        .attr("x", this.width - this.margin.left - this.margin.right)
+        .attr("y", this.height + 55)
+        .text(this.axisNames[0])
+        .style("font-size", 12)
+        .style("fill", "#69a3b2");
+
+    this.svg.append("text")//Coloca o que o eixo y representa
+        .attr("text-anchor", "top")
+        .attr("y", -5)
+        .attr("x", -22)
+        .text(this.axisNames[1])
+        .style("font-size", 12)
         .style("fill", "#69a3b2");
   }
 

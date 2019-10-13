@@ -20,7 +20,7 @@ export class DadosService {
   private clientsData:any[] = [];
   private dadosClientes:any[] = [];
   private dadosQuestionarios:any[] = [];
-  private consultaEventos: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-25' and e.date_str >= '2019-10-02' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
+  private consultaEventos: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
 
   constructor(private neo4j: AngularNeo4jService) { }
 
@@ -253,6 +253,7 @@ export class DadosService {
 
     obj["firstEvent"] = this.dadosClientes[j][1][0][0];
     obj["lastEvent"] = this.dadosClientes[j][1][length-1][0];
+    obj["Events"] = this.dadosClientes[j][1];
     obj["eventsQuantity"] = length;
     
     return obj;

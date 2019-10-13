@@ -14,9 +14,18 @@ export class BubbleChartComponent implements OnChanges {
   @Input()
   data:any[] = [];
 
+  @Input()
+  private axisNames:string[] = [];
+
+  @Input()
+  private colors:any[] = [];
+
+  @Input()
+  private areasName:string[] = [];
+
   private dados:any[] = [];
 
-  margin = {top: 20, right: 20, bottom: 40, left: 50};
+  private margin = {top: 50, right: 20, bottom: 30, left: 50};
 
   constructor() { }
 
@@ -24,32 +33,33 @@ export class BubbleChartComponent implements OnChanges {
     this.createChart();
   }
   private createChart(){
-
+    if(!this.data)
+      return;
+      
     const element = this.chartContainer.nativeElement;//recebe a div que contera o svg
     d3.select(element).select('svg').remove();
-
-    const svg = d3.select(element).append('svg')//Coloca o svg nessa div
-        .attr('width', element.offsetWidth)
-        .attr('height', 250);
-    const g = svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-
+    
     //Define os tamanhos
     const contentWidth = element.offsetWidth - this.margin.left - this.margin.right;
     const contentHeight = 250 - this.margin.top - this.margin.bottom;
 
+    const svg = d3.select(element).append('svg')//Coloca o svg nessa div
+        .attr('width', element.offsetWidth)
+        .attr('height', contentHeight + this.margin.top + this.margin.bottom);
+    const g = svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+    var opacity = 0.55;
+
     var color = d3.scaleOrdinal()//Define as cores
-      .domain(["Eventos", "Média de Eventos"])
-      .range(["rgba(249, 208, 87, 0.7)", "rgba(54, 174, 175, 0.65)"]);
+      .domain(["1", "2"])
+      .range([this.colors[0], this.colors[1]]);
     
     var x = d3.scalePoint().rangeRound([0, contentWidth]),
       y = d3.scaleLinear().rangeRound([contentHeight, 0]);
       
-    if(!this.data)
-      return;
-      
     // @ts-ignore
     x.domain(this.data.map((d) => d[0]));
-    y.domain([0, d3.max(this.data, (d) => d[1])]);
+    y.domain([0, this.maxOf2()]);
   
     g.append("g")//Atribui os valores ao eixo horizontal
         .attr("class", "x axis")
@@ -58,17 +68,26 @@ export class BubbleChartComponent implements OnChanges {
         .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-30)")
         .style("text-anchor", "end")
-        .style("font-size", 10);
-  
+        .style("font-size", 10)
+        .style("fill", "#D7DBDD");
+
+        svg.append("text")//Coloca o que o eixo x representa
+        .attr("text-anchor", "middle")
+        .attr("x", contentWidth)
+        .attr("y", contentHeight + 68)
+        .text(this.axisNames[0])
+        .style("font-size", 10)
+        .style("fill", "#D7DBDD");
+
     g.append("g")//Atribui os valores ao eixo vertical
         .attr("class", "axis axis--y")
         .call(d3.axisLeft(y))
       .append("text")
-        .attr("transform", "rotate(90)")
-        .attr("y", 6)
+        .attr("y", -15)
+        .attr("x", 100)
         .attr("dy", "0.71em")
-        .attr("fill", "gray")
-        .text("Acessos");
+        .attr("fill", "#D7DBDD")
+        .text(this.axisNames[1]);
 
     g.append("path")
       .datum(this.data)
@@ -81,7 +100,8 @@ export class BubbleChartComponent implements OnChanges {
             // @ts-ignore
             .y1((d)=> y(d[1])))
           // @ts-ignore
-          .style("fill", "rgba(249, 208, 87, 0.7)");
+          .style("fill", color("1"))
+          .style("opacity", opacity);
     
     g.append("path")
       .datum(this.data)
@@ -94,11 +114,50 @@ export class BubbleChartComponent implements OnChanges {
             // @ts-ignore
             .y1((d)=> y(d[2])))
           // @ts-ignore
-          .style("fill", "rgba(54, 174, 175, 0.65)");
+          .style("fill", color("2"))
+          .style("opacity", opacity);
+
+      //Definição da legenda e sua posição
+      svg.append("circle")
+        .attr("cx",170)
+        .attr("cy",20)
+        .attr("r", 6)
+        .style("fill", this.colors[0]);
+      
+      svg.append("circle")
+        .attr("cx",170)
+        .attr("cy",40)
+        .attr("r", 6)
+        .style("fill", this.colors[1]);
+      
+      svg.append("text")
+        .attr("x", 180)
+        .attr("y", 20)
+        .text(this.areasName[0])
+        .style("font-size", 12)
+        .style("fill", this.colors[0])
+        .attr("alignment-baseline","middle");
+      
+      svg.append("text")
+        .attr("x", 180)
+        .attr("y", 40)
+        .text(this.areasName[1])
+        .style("font-size", 12)
+        .style("fill", this.colors[1])
+        .attr("alignment-baseline","middle");
+          
+  }
+
+  private maxOf2(){
+    var max1 = d3.max(this.data, d => {return d[1];});
+    var max2 = d3.max(this.data, d => {return d[2];});
+    
+    if(max1> max2)
+      return max1;
+
+    return max2;
   }
 }
-
-
 /* 
 //Recebe os dados separados e junta eles, formando um array de objetos
     //sendo que cada objeto contem o nome e os tempos

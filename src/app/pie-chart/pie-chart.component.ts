@@ -23,6 +23,9 @@ export class PieChartComponent implements OnChanges {
   @Input()
   private dados:any[] = [];
 
+  @Input()
+  private colors:string[] = [];
+
   margin = {top: 30, right: 20, bottom: 30, left: 40};
 
   constructor() { }
@@ -47,7 +50,7 @@ export class PieChartComponent implements OnChanges {
     this.contentHeight = this.height - this.margin.top - this.margin.bottom;
 
     this.width = this.htmlElement.offsetWidth;
-    this.height = 350;
+    this.height = 250;
     this.radius = Math.min(this.width, this.height)/2;//Determina o raio
   }
 
@@ -77,8 +80,13 @@ export class PieChartComponent implements OnChanges {
   private populatePie(arcSelection: any): void {
       let innerRadius = 0;
       let outerRadius = this.radius * 0.7;
-      let pieColor = d3.scaleOrdinal(d3.schemeCategory10);//Define o tipo de escala
+
+      //let pieColor = d3.scaleOrdinal(d3.schemeCategory10);//Define o tipo de escala
       
+      var pieColor = d3.scaleOrdinal()
+        .domain([0+"",1+""])
+        .range([this.colors[0], this.colors[1]]);
+
       let arc = d3.arc()//Define o tamanho do circulo
           .innerRadius(innerRadius)
           .outerRadius(outerRadius);
@@ -90,7 +98,7 @@ export class PieChartComponent implements OnChanges {
       arcSelection.append("path")//Coloca as cores
           .attr("d", arc)
           .attr("fill", (d, index) => {
-              return pieColor(index);
+              return pieColor(index+"");
           });
 
       arcSelection.append("text")//Atribui o tipos de cada arco
