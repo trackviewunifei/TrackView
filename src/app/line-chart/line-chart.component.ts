@@ -92,7 +92,7 @@ export class LineChartComponent implements OnChanges{
 
     var myColor = d3.scaleOrdinal()
         .domain(this.tipos)
-        .range([this.colors[0], this.colors[2], this.colors[1]]);
+        .range([this.colors[0], this.colors[1], this.colors[2]]);
 
     this.svg.append("g")//Add x axis
         .attr("class", "x axis")

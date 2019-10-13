@@ -20,7 +20,7 @@ export class DadosService {
   private clientsData:any[] = [];
   private dadosClientes:any[] = [];
   private dadosQuestionarios:any[] = [];
-  private consultaEventos: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
+  private eventsQuery: string = "";
 
   constructor(private neo4j: AngularNeo4jService) { }
 
@@ -55,12 +55,13 @@ export class DadosService {
     this.neo4j.disconnect();
   }
 
-  async obtemDados(){
-    
-    if(this.clientsData.length != 0)
-      return this.clientsData;
+  async obtemDados(query:string){
 
-    this.dadosClientes = await this.getDados(this.consultaEventos);
+    if(this.eventsQuery == query)
+      return this.clientsData;
+    
+    this.eventsQuery = query;
+    this.dadosClientes = await this.getDados(this.eventsQuery);
     await this.leituraRespostasQuestionario();
     await this.leituraEventos();
     return this.clientsData;
@@ -87,7 +88,7 @@ export class DadosService {
   private async leituraEventos(){
     this.clientsData = new Array();
     var obj, i = 0;
-    await d3.csv("../../assets/formsGoogle.csv").then((data)=> {//Le o csv
+    await d3.csv("../../assets/forms.csv").then((data)=> {//Le o csv
       data.forEach(element => {//para cada elemento vindo do csv ira
         //replace(/[\\"]/g, ''); possivel necessidade disso depois
         var array = this.separaEventosArea(element.Name);

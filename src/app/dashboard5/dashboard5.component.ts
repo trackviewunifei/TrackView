@@ -1,6 +1,6 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
-import { AngularNeo4jService } from 'angular-neo4j';
+import { Component, OnChanges, Input } from '@angular/core';
 import { DadosService } from '../dados.service';
+import { TooltipService } from '../tooltip.service';
 
 @Component({
   selector: 'app-dashboard5',
@@ -9,59 +9,88 @@ import { DadosService } from '../dados.service';
 })
 export class Dashboard5Component implements OnChanges {
 
-  //Variáveis que resultaram nos gráficos
-  private grafBullet:any[];
-  private grafLine:any[];
-  private nomesLinhas:string[] = [];
-  private grafLinha:any[];
-  private grafArea:any[];
-  
+  @Input()
+  private group1Data:any[] = [];
+  private group2Data:any[] = [];
+
+  private queryGroup2:string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-14' and e.date_str >= '2019-10-13T00:25' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
+  private queryGroup1:string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
+  //Variáveis que resultarão nos gráficos
+  private radarChart:any[];
+  private areaChart:any[];  
+  private lineChart:any[];
+  private bulletChart:any[];
+
   //Variáveis auxiliares
-  private  consulta: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
-  private dados:any[];
+  private nomesLinhas:string[] = [];
+  private areasNames:string[];
+  private axisNamesLine:string[];
+  private axisNamesArea:string[];
+  private axisNamesBullet:string[];
+  private bulletHeight = 170;
   private card1:string[];
   private card2:string[];
   private card3:string[];
   private card4:string[];
-  private consultaArea1: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) where e.date_str =~ '.*2019-09-20.*' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, right(left(e.date_str, 13),2) as data, count(distinct u) as qtdUsers order by data";
-  private consultaArea2: string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) where e.date_str =~ '.*2019-09.*' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, right(left(e.date_str, 13),2) as data, count(distinct u) as qtdUsers order by data";
-  private area1:any[];
-  private area2:any[];
-  private linha:any[];
+  private colors:any[];
 
-  constructor(private neo4j: AngularNeo4jService, private _dados: DadosService) { 
+  private startTimeG1;
+  private endTimeG1;
+  private startTimeG2;
+  private endTimeG2;
+
+  constructor(private _dados: DadosService, private _tooltip: TooltipService) { 
+    this.cardsAjust();
     this.obDados();
   }
 
   ngOnChanges() {
+    if(!this.group1Data || !this.group2Data)
+      return;
+
+    this.obDados();
   }
 
   private async obDados(){
-    await this.obtemDados(this.consulta);
+    await this.obtemDados();
     this._dados.closeConnection();
+
+    this.setStartEndDate(this.group1Data, 1);
+    this.setStartEndDate(this.group2Data, 2);
+
+    this.areaAjust();
+    this.lineAjust();
+    this.cardInsertData();
+    this.fillAxis();
+    this.radarAjust();
+    this.bulletAjust();
   }
 
-  private async obtemDados(consulta :string){
+  private async obtemDados(){
+    this.group1Data = await this._dados.obtemDados(this.queryGroup1);
+    this.group2Data = await this._dados.obtemDados(this.queryGroup2);
+  }
 
-    this.ajustaCard("Acessos", "42 Acessos", " test1",1);
-    this.ajustaCard("Aoba", "2 Acessos", " test2",2);
-    this.ajustaCard("Páginas", "31 Acessos", " teste3",3);
-    this.ajustaCard("Users", "32 Acessos", " teste4",4);
-    this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
-    this.ajustaArrayLinha();
-    this.dados = await this._dados.getDados(consulta);
+  private cardsAjust(){
+    this.cardAjust("", "", "",1);
+    this.cardAjust("", "", "",2);
+    this.cardAjust("", "", "",3);
+    this.cardAjust("", "", "",4);
+  }
 
-    this.area1 = await this._dados.getDados(this.consultaArea1);
-      this.area2 = await this._dados.getDados(this.consultaArea2);
-      this.uneArrayArea();
+  private cardInsertData(){
+    this.cardAjust("Usuários", this.group1Data.length+" Usuários G1", this.group2Data.length + " Usuários G2", 1);
+    this.cardAjust("Eventos", "Média de Eventos G1: " + (this._tooltip.getAverageEventsPerClient(this.group1Data)).toFixed(2), "Média de Eventos G2: "+(this._tooltip.getAverageEventsPerClient(this.group2Data)).toFixed(2),2);
+    this.cardAjust("Tempo", "Média de Tempo G1: "+(this._tooltip.getAverageTime(this.group1Data)).toFixed(2)+" minutos", "Média de Tempo G2: " + (this._tooltip.getAverageTime(this.group2Data)).toFixed(2) +" minutos", 3);
+    this.cardAjust("Coerência", "Coerência G1: " + (this._tooltip.getAverageCoherence(this.group1Data)).toFixed(2), "Coerência G2: " + (this._tooltip.getAverageCoherence(this.group2Data)).toFixed(2), 4);
     
   }
 
-  private ajustaCard(nomeCard:string, valorCard:string, attExtra:string, cardOpt){
+  private cardAjust(cardName:string, cardValue:string, attExtra:string, cardOpt){
     var lista:string[] = [];
     
-    lista.push(nomeCard);
-    lista.push(valorCard);
+    lista.push(cardName);
+    lista.push(cardValue);
     lista.push(attExtra);
 
     if(cardOpt == 1)
@@ -74,65 +103,288 @@ export class Dashboard5Component implements OnChanges {
       this.card4 = lista;
   }
 
-  private ajustaArrayArea(hora){
-    var obj:any[] ;
+  private fillAxis(){
+    this.axisNamesArea = [];
+    this.axisNamesLine = [];
+    this.axisNamesBullet = [];
+
+    this.axisNamesArea.push("Tempo");
+    this.axisNamesArea.push("Média de eventos por usuários");
+
+    this.axisNamesBullet.push("Tempo (minutos)");
+    this.axisNamesBullet.push("Tipo");
+
+    this.axisNamesLine.push("Tempo");
+    this.axisNamesLine.push("Eventos");
     
-    if (hora >= 24)
-      hora = 23;
+    this.colors = [];
+    this.colors.push("#F1C40F");
+    this.colors.push("#2980B9");
+    this.colors.push("#2ECC71");
+  }
+
+  private radarAjust(){
+    this.radarChart = [];
+
+    this.radarChart.push(this.singleRadar(this.group1Data, "Grupo 1", this.colors[0]));
+    this.radarChart.push(this.singleRadar(this.group2Data, "Grupo 2", this.colors[1]));
+  }
+
+  private singleRadar(clientsDate:any[], pag :string, color: string){
+    var obj = new Object();
+    var arr:any[] = [];
     
-      for(var i = 0; i <= hora; i++){
-      obj = [];//pre aloca o vetor que conterá os dados
-      obj.push(i);
-      obj.push(0);
-      obj.push(0);
-      this.grafArea.push(obj); 
+    var axis1 = new Object();
+    var axis2 = new Object();
+    var axis3 = new Object();
+    var axis4 = new Object();
+    
+    obj["name"] = pag;
+    axis1["axis"] = "Média de Coerência";
+    axis1["value"] = (this._tooltip.getAverageCoherence(clientsDate)*10).toFixed(2);
+    arr.push(axis1);
+    
+    axis3["axis"] = "Média de Eventos pelo tempo";
+    axis3["value"] = this.getEventsPerTime(clientsDate).toFixed(2);
+    arr.push(axis3);
+
+    axis2["axis"] = "Tempo Médio";
+    axis2["value"] = (this._tooltip.getAverageTime(clientsDate)).toFixed(2);
+    arr.push(axis2);
+    
+    axis4["axis"] = "Média de Páginas Acessadas";
+    axis4["value"] = this.areasAccess(clientsDate);
+    arr.push(axis4);
+    
+    obj["axes"] = arr;
+    obj["color"] = color;
+    
+    return obj;
+  }
+
+  private areasAccess(clientsData:any[]){
+    var areas = 0;
+    clientsData.forEach(element => {
+      areas += element["EventArea"].length;
+    });
+    
+    return areas/clientsData.length;
+  }
+
+  private getEventsPerTime(clientsData:any[]){
+    var events = 0;
+    var timeMed = 0;
+    var data1, data2;
+
+    clientsData.forEach(element => {
+      data1 = new Date(element["InfoEvents"]["firstEvent"]);
+      data2 = new Date(element["InfoEvents"]["lastEvent"]);
+      timeMed += data2.getTime() - data1.getTime(); 
+      events += element["InfoEvents"]["Events"].length;
+    }); 
+
+    timeMed /= 1000;
+    timeMed /= 60;
+
+    return events/timeMed;
+  }
+
+  private lineAjust(){
+    var n, lineGroup1:any[], lineGroup2:any[], arr:any[];
+    this.lineChart = [];
+
+    this.nomesLinhas.push("Grupo_1_(Menos_Experiente)");
+    this.nomesLinhas.push("Grupo_2_(Mais_Experiente)");
+    this.nomesLinhas.push("Média");
+    
+    lineGroup1 = this.singleLine(this.group1Data, this.startTimeG1, this.endTimeG1);
+    lineGroup2 = this.singleLine(this.group2Data, this.startTimeG2, this.endTimeG2);
+    n = lineGroup1.length;
+    if(n > lineGroup2.length)
+      n = lineGroup2.length;
+
+    for(var i = 0; i < n; i++){
+      arr = [];
+      arr.push(i);
+      arr.push(lineGroup1[i][1]);
+      arr.push(lineGroup2[i][1]);
+      arr.push((lineGroup1[i][1] + lineGroup2[i][1])/2);
+      this.lineChart.push(arr);
     }
   }
-  
 
-  private uneArrayArea(){
-    this.grafArea = [];
-    this.ajustaArrayArea(23);
-
-    this.area1.forEach(element => {
-      this.grafArea[parseInt(element[1])][1] = element[2];
+  private singleLine(clientsData:any[], startTime:Date, endTime:Date){
+    var arr:any[], lines:any[] = [], dateAux:Date, i;
+    
+    for(i = startTime.getTime(); i <= endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+      dateAux = new Date(i);
+      arr = [];//pre aloca o vetor que conterá os dados
+      arr.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      arr.push(0);
+      lines.push(arr);
+    }
+    clientsData.forEach(element => {// para cada cliente irá percorrer seus eventos e lançar a qual posição eles pertencem
+      element["InfoEvents"]["Events"].forEach(event => {
+        lines.forEach(data => {
+          if(event[0].includes(data[0]))
+            data[1] += 1;
+          
+        });
+      });      
     });
 
-    this.area2.forEach(element => {
-      this.grafArea[parseInt(element[1])][2] = element[2]/20;//dividir pelo numero de dias do mês para dar uma média
-    });
+    return lines;
   }
 
-  private ajustaArrayLinha(){
-    this.grafLinha = [];
-    var str:string[];
-    this.linha.forEach(element => {//Obtem os nomes dos navegadores
-      str = element[1].split("(");
-      str = str[1].split(";");
-      str = str[0].split(" ");
-      if(!this.nomesLinhas.includes(str[0]))
-        this.nomesLinhas.push(str[0]);
+  private areaAjust(){
+    var areaG1:any[], areaG2:any[];
+    var arr:any[], n; 
+    this.areaChart = [];
+
+    areaG1 = this.singleArea(this.group1Data, this.startTimeG1, this.endTimeG1);
+    areaG2 = this.singleArea(this.group2Data, this.startTimeG2, this.endTimeG2);
+
+    n = areaG1.length;
+    if(n > areaG2.length)
+      n = areaG2.length;
+
+    for(var i = 0; i < n; i++){
+      arr = [];
+      arr.push(i);
+      arr.push(areaG1[i][1]);
+      arr.push(areaG2[i][1]);
+      this.areaChart.push(arr);
+    }
+    
+    this.areasNames = [];
+    this.areasNames.push("Grupo 1 (Menos experiente)");
+    this.areasNames.push("Grupo 2 (Mais experiente)");
+
+  }
+
+  private singleArea(clientsData:any[], startTime:Date, endTime:Date){
+    var arr:any[], areas:any[], dateAux:Date, stateArray:any [], i;
+    
+    stateArray = [];
+    areas = [];
+    
+    for(i = startTime.getTime(); i <= endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+      dateAux = new Date(i);
+      stateArray.push(0);
+      arr = [];//pre aloca o vetor que conterá os dados
+      arr.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      arr.push(0);
+      arr.push(0);
+      areas.push(arr);
+    }
+    
+    clientsData.forEach(element => {
+      element["InfoEvents"]["Events"].forEach(event => {
+        i = 0;
+        areas.forEach(data => {
+          if(event[0].includes(data[0])){
+            data[1] += 1;
+            
+            if(stateArray[i] == 0){
+              stateArray[i] = 2;
+              data[stateArray[i]] += 1;
+            }
+          }
+          i++;
+        });
+      });
+
+      for(i = 0; i < areas.length; i++)
+        if(stateArray[i] != 0 )
+          stateArray[i] = 0;
+        
     });
 
-    this.linha.forEach(element => {
-      if(!this.grafLinha.find(ele => ele[0] == element[0])){  
-        var obj:any[] = [];
-        obj.push(element[0]);
-        obj.push(0);
-        obj.push(0);
-        obj.push(0);
-        for(var i = this.linha.indexOf(element); i < this.linha.length; i++){
-          if(element[0] == this.linha[i][0]){
-            str = this.linha[i][1].split("(");
-            str = str[1].split(";");
-            str = str[0].split(" ");
-            obj[this.nomesLinhas.indexOf(str[0])+1] = this.linha[i][2];
-          }
-        }
-        this.grafLinha.push(obj);
-      }
+    areas.forEach(element => {
+      if(element[1] != 0 && element[2] != 0)
+        element[1] /= element[2];
     });
-    console.log(this.grafLinha);
+
+    return areas; 
+  }
+
+  private bulletAjust(){
+    this.bulletChart = [];
+    var contG1 = 0, contG2 = 0;
+    var timeG1 = 0, timeG2 = 0, med = 0;
+    var obj = [], data1, data2;
+
+    this.group1Data.forEach(element => {
+      element["EventArea"].forEach(data => {
+        data1 = new Date(data["inicio"]);
+        data2 = new Date(data["fim"]);
+        timeG1 += data2.getTime() - data1.getTime(); 
+        contG1 ++;
+      });
+    });
+    
+    this.group2Data.forEach(element => {
+      element["EventArea"].forEach(data => {
+        data1 = new Date(data["inicio"]);
+        data2 = new Date(data["fim"]);
+        timeG2 += data2.getTime() - data1.getTime(); 
+        contG2 ++;
+      });
+    });
+
+    timeG1 /= 1000;//Ajustes visto que o tempo obtido esta em milisegundos
+    timeG1 /= 60;
+    timeG2 /= 1000;
+    timeG2 /= 60;
+
+    med = timeG1/contG1;
+    med += timeG2/contG2;
+    med /= 2;
+
+    obj.push("Média");
+    obj.push(med);
+    this.bulletChart.push(obj);
+
+    obj = [];
+    obj.push("Grupo 2");
+    obj.push(timeG2/contG2);
+    this.bulletChart.push(obj);
+
+    obj = [];
+    obj.push("Grupo 1");
+    obj.push(timeG1/contG1);
+    this.bulletChart.push(obj);
+
+  }
+
+  private setStartEndDate(clientsData:any[], group){
+    var firstEvent = 0, lastEvent = 0; 
+    var data1, data2;
+    
+    data1 = new Date(clientsData[0]["InfoEvents"]["firstEvent"])
+    firstEvent = data1.getTime();
+    //Obter Menor e maior evento
+    clientsData.forEach(element => {
+      data1 = new Date(element["InfoEvents"]["firstEvent"]);
+      data2 = new Date(element["InfoEvents"]["lastEvent"]);
+      
+      if(data2.getTime() > lastEvent)
+        lastEvent = data2.getTime();
+      
+      if(data1.getTime() < firstEvent)
+        firstEvent = data1.getTime();
+    });
+
+    data1 = new Date(firstEvent);
+    data2 = new Date(lastEvent);
+
+    if(group == 1){
+      this.startTimeG1 = this._tooltip.dataAjust(data1);
+      this.endTimeG1 = this._tooltip.dataAjust(data2);
+    }else{
+      this.startTimeG2 = this._tooltip.dataAjust(data1);
+      this.endTimeG2 = this._tooltip.dataAjust(data2);
+    }
   }
 
 }

@@ -21,6 +21,9 @@ export class BulletChartComponent implements OnChanges {
   @Input()
   private colors:string[] = [];
 
+  @Input()
+  private height;
+
   private margin = {top: 20, right: 20, bottom: 40, left: 100};
 
   constructor() { }
@@ -39,10 +42,10 @@ export class BulletChartComponent implements OnChanges {
 
     const svg = d3.select(element).append('svg')
         .attr('width', element.offsetWidth)
-        .attr('height', 250);
+        .attr('height', this.height);
 
     const contentWidth = element.offsetWidth - this.margin.left - this.margin.right;
-    const contentHeight = 250 - this.margin.top - this.margin.bottom;
+    const contentHeight = this.height - this.margin.top - this.margin.bottom;
 
     const x = d3
       .scaleLinear()

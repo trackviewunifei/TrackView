@@ -16,6 +16,9 @@ export class RadarChartComponent implements OnChanges {
   query: string;
 
   @Input()
+  private colors:string[] = [];
+
+  @Input()
   private data:any[] = [];
 
   constructor() { }
@@ -31,8 +34,8 @@ export class RadarChartComponent implements OnChanges {
     const diameter = 600;
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    var margin = { top: 50, right: 80, bottom: 50, left: 80 },
-    width = Math.min(700, window.innerWidth / 4) - margin.left - margin.right,
+    var margin = { top: 50, right: 80, bottom: 60, left: 80 },
+    width = Math.min(900, window.innerWidth / 4) - margin.left - margin.right,
     height = Math.min(width, window.innerHeight - margin.top - margin.bottom);
     var data = this.data;
     /*var data = [
@@ -69,16 +72,16 @@ export class RadarChartComponent implements OnChanges {
     ];*/
     
     var radarChartOptions2 = {
-      w: 290,
-      h: 300,
+      w: 300,
+      h: 220,
       margin: margin,
-      maxValue: 60,
-      levels: 6,
+      maxValue: 7,
+      levels: 5,
       roundStrokes: false,
-      color: d3.scaleOrdinal().range(["#AFC52F", "#ff6600", "#2a2fd4"]),
+      color: d3.scaleOrdinal().range([this.colors[0], this.colors[1], this.colors[2]]),
       format: '.0f',
-      legend: { title: 'Organization XYZ', translateX: 100, translateY: 40 },
-      unit: '$'
+      legend: { title: 'Grupos', translateX: 100, translateY: 40 },
+      unit: ''
     };
     // Draw the chart, get a reference the created svg element :
     let svg_radar2 = this.RadarChart(".radarChart2", data, radarChartOptions2);
@@ -119,7 +122,7 @@ export class RadarChartComponent implements OnChanges {
     const cfg = {
       w: 600,				//Width of the circle
       h: 600,				//Height of the circle
-      margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
+      margin: {top: 40, right: 40, bottom: 40, left: 40}, //The margins of the SVG
       levels: 3,				//How many levels or inner circles should there be drawn
       maxValue: 0, 			//What is the value that the biggest circle will represent
       labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
@@ -257,7 +260,7 @@ export class RadarChartComponent implements OnChanges {
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
       .attr("x", (d,i) => rScale(maxValue * cfg.labelFactor) * this.cos(angleSlice * i - this.HALF_PI))
-      .attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * this.sin(angleSlice * i - this.HALF_PI))
+      .attr("y", (d,i) => rScale(maxValue * cfg.labelFactor) * this.sin(angleSlice * i - this.HALF_PI)-10)
       // @ts-ignore
       .text(d => d)
       .call(wrap, cfg.wrapWidth);

@@ -24,6 +24,7 @@ export class Dashboard4Component implements OnChanges {
   private axisNamesBullet: string[];
   private axisNamesLine: string[];
   private axisNamesArea: string[];
+  private bulletHeight = 250;
   private card1:string[];
   private card2:string[];
   private card3:string[];
@@ -58,7 +59,7 @@ export class Dashboard4Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.obtemDados();    
+    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
   }
 
   private cardsAjust(){
@@ -268,8 +269,8 @@ export class Dashboard4Component implements OnChanges {
     this.lineChart = [];
 
     this.nomesLinhas.push("Mais_de_60%_de_coerência");
-    this.nomesLinhas.push("Média");
     this.nomesLinhas.push("Menos_de_60%_de_coerência");
+    this.nomesLinhas.push("Média");
     
     for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);
@@ -295,6 +296,10 @@ export class Dashboard4Component implements OnChanges {
         });
       });      
     });
+
+    this.lineChart.forEach(data => {
+      data[3] /= 2;      
+    });
   }
 
   private setStartEndDate(){
@@ -309,10 +314,10 @@ export class Dashboard4Component implements OnChanges {
       data2 = new Date(element["InfoEvents"]["lastEvent"]);
       
       if(data2.getTime() > lastEvent)
-        lastEvent = data2
+        lastEvent = data2.getTime();
       
       if(data1.getTime() < firstEvent)
-        firstEvent = data1;
+        firstEvent = data1.getTime();
     });
 
     data1 = new Date(firstEvent);

@@ -1,7 +1,4 @@
-"Timestamp","!!! Não mudar esse campo !!!","Áreas de Interesse","Tecnologias que Você domina","Qual dos clientes Você gostaria de prestar serviço","Informe seu perfil profissional"
-"2019/09/19 9:35:56 PM GMT-3","","brenda-sousa-1568939658729","React","",""
-"2019/09/23 10:47:43 PM GMT-3","","Gaming;Neurocomputação;Realidade Virtual;Servidores;Robótica;Plataformas;Embarcados;Computação Verde","Python;C/C++;React;PHP;Angular","Google;BMW;Toyota;Adidas","Criativo;Capacidade de trabalhar em Equipe;Resiliente;Flexível;Participado de Game Jam;Conhecimentos em VR"
-"2019/09/24 12:28:45 PM GMT-3","","Robótica;Plataformas","Java","Netflix;Nestle","Resiliente;Dedicado;Conhecimentos em VR"
+Timestamp,Name,Area,Technology,Client,Perfil
 "2019/09/24 5:21:28 PM GMT-3","victor-rocha-1569356429860","Plataformas;Embarcados","C/C++;React","Nestle;Netshoes","Conhecimentos em eletrônica;Conhecimentos em IoT"
 "2019/09/24 6:30:03 PM GMT-3","giovanna-santos-1569360447959","Embarcados;Computação Verde","Java;Angular","Hospital Albert Einstein;Embraer","Proativo"
 "2019/09/25 9:25:52 PM GMT-3","isabelle-cardoso-1569457287081","Neurocomputação;Realidade Virtual;Servidores;Robótica;Embarcados","C/C++;Java;Robo FANUC","Nestle;Embraer;Toyota;Boing","Criativo;Capacidade de trabalhar em Equipe;Proativo;Responsável;Disponível;Resiliente;Líder;Flexível;Motivado;Dedicado;Conhecimentos em eletrônica;Conhecimentos em IoT;Disponibilidade para viagens e treinamentos"

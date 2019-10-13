@@ -63,7 +63,7 @@ export class AppComponent {
     await this.leituraEventos();
     //await this.obtemDados(this.consulta1, false);
     //await this.obtemDados(this.consulta2);
-    this._dados.closeConnection();
+    //this._dados.closeConnection();
   }
 
   private async obtemDados(consulta :string, opt: boolean){

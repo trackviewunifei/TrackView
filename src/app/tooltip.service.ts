@@ -17,7 +17,16 @@ export class TooltipService {
     return coherence/clientsData.length;
   }
 
-  public getAverageTimeOnArea(clientsData: any[]){
+  public getAverageEventsPerClient(clientsData:any[]){
+    var events = 0;
+    clientsData.forEach(element =>{
+      events += element["InfoEvents"]["Events"].length;
+    });
+
+    return events/clientsData.length;
+  }
+
+  public getAverageTimeOnArea(clientsData: any[]){//TODO: make a method do capture the time in a modal
     var contMed = 0;
     var timeMed = 0;
     var data1, data2;
