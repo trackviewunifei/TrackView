@@ -57,7 +57,7 @@ export class Dashboard5Component implements OnChanges {
 
     this.setStartEndDate(this.group1Data, 1);
     this.setStartEndDate(this.group2Data, 2);
-
+    
     this.areaAjust();
     this.lineAjust();
     this.cardInsertData();
@@ -341,8 +341,8 @@ export class Dashboard5Component implements OnChanges {
     med += timeG2/contG2;
     med /= 2;
 
-    obj.push("Média");
-    obj.push(med);
+    obj.push("Grupo 1");
+    obj.push(timeG1/contG1);
     this.bulletChart.push(obj);
 
     obj = [];
@@ -351,8 +351,8 @@ export class Dashboard5Component implements OnChanges {
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Grupo 1");
-    obj.push(timeG1/contG1);
+    obj.push("Média");
+    obj.push(med);
     this.bulletChart.push(obj);
 
   }

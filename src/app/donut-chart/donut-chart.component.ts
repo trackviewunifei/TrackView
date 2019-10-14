@@ -24,6 +24,10 @@ export class DonutChartComponent implements OnChanges{
 
   @Input()
   dados:any[] = [];
+
+  @Input()
+  private colors:string[] = [];
+
   margin = {top: 10, right: 10, bottom: 10, left: 10};
 
   constructor() { }
@@ -68,7 +72,12 @@ export class DonutChartComponent implements OnChanges{
 
     let innerRadius = this.radius * 0.4;
     let raid = this.radius
-    let pieColor = d3.scaleOrdinal(d3.schemeCategory10);
+    //let pieColor = d3.scaleOrdinal(d3.schemeCategory10);
+    
+    var pieColor = d3.scaleOrdinal()
+    .domain([0+"",1+"", 2+"",3+"", 4+"",5+""])
+    .range([this.colors[0], this.colors[1], this.colors[2], this.colors[3], this.colors[4], this.colors[5]]);
+    
     let arc = d3.arc()//Define o comprimento do arco
       .innerRadius(innerRadius)
       .outerRadius(function (d){

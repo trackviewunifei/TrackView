@@ -84,8 +84,8 @@ export class PieChartComponent implements OnChanges {
       //let pieColor = d3.scaleOrdinal(d3.schemeCategory10);//Define o tipo de escala
       
       var pieColor = d3.scaleOrdinal()
-        .domain([0+"",1+""])
-        .range([this.colors[0], this.colors[1]]);
+        .domain([0+"",1+"", 2+"",3+"", 4+"",5+""])
+        .range([this.colors[0], this.colors[1], this.colors[2], this.colors[3], this.colors[4], this.colors[5]]);
 
       let arc = d3.arc()//Define o tamanho do circulo
           .innerRadius(innerRadius)

@@ -160,8 +160,8 @@ export class Dashboard4Component implements OnChanges {
     med += timeMinus/contMinus;
     med /= 2;
 
-    obj.push("Média");
-    obj.push(med);
+    obj.push("Mais de 60% de coerência");
+    obj.push(timePlus/contPlus);
     this.bulletChart.push(obj);
 
     obj = [];
@@ -170,8 +170,8 @@ export class Dashboard4Component implements OnChanges {
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Mais de 60% de coerência");
-    obj.push(timePlus/contPlus);
+    obj.push("Média");
+    obj.push(med);
     this.bulletChart.push(obj);
 
   }

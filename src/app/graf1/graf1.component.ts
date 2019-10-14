@@ -15,6 +15,12 @@ export class Graf1Component implements OnChanges {
   @Input()
   private dados:any[] = [];
 
+  @Input()
+  private axisNames:string[] = [];
+
+  @Input()
+  private colors:string[] = [];
+
   margin = {top: 20, right: 20, bottom: 70, left: 50};
 
   constructor() { }
@@ -48,9 +54,14 @@ export class Graf1Component implements OnChanges {
       .scaleLinear()
       .rangeRound([contentHeight, 0])
       .domain([0, d3.max(data, (d, i) => this.dados[i][1])]);
-
+    /*
     const colorScale = d3.scaleOrdinal(d3.schemeRdYlBu[9])
       .domain([0, d3.max(data, (d, i) => this.dados[i][1])]);
+    */
+    const colorScale = d3.scaleOrdinal()
+      .domain(["0", "1", "2", "3", "4", "5"])
+      .range([this.colors[0], this.colors[1], this.colors[2], this.colors[3], this.colors[4], this.colors[5],]);
+
 
     const g = svg.append('g')
       .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
@@ -62,7 +73,8 @@ export class Graf1Component implements OnChanges {
       .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)")
         .style("text-anchor", "end")
-        .style("font-size", 10);
+        .style("font-size", 10)
+        .style("fill", function (d, i) { return ""+colorScale(i+""); });
 
     g.append('g')//Preenche o eixo y
       .attr('class', 'axis axis--y')
@@ -82,13 +94,13 @@ export class Graf1Component implements OnChanges {
         .attr('y', (d, i) => y(this.dados[i][1]))
         .attr('width', x.bandwidth())
         .attr('height', (d, i) => contentHeight - y(this.dados[i][1]))
-        .style("fill", function (d, i) { return colorScale(d[1]); });
+        .style("fill", function (d, i) { return ""+colorScale(i+""); });
 
     svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
         .attr("x", contentWidth+25)
         .attr("y", contentHeight + this.margin.top + 55)
-        .text("Produtos")
+        .text(this.axisNames[0])
         .style("font-size", 12)
         .style("fill", "#69a3b2");
 
@@ -97,7 +109,7 @@ export class Graf1Component implements OnChanges {
         .attr("transform", "rotate(-90)")
         .attr("y", 20)
         .attr("x", -100)
-        .text("Valor")
+        .text(this.axisNames[1])
         .style("font-size", 12)
         .style("fill", "#69a3b2");
   }

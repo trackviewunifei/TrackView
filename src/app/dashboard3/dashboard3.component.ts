@@ -1,6 +1,7 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { AngularNeo4jService } from 'angular-neo4j';
 import { DadosService } from './../dados.service';
+import { TooltipService } from '../tooltip.service';
 @Component({
   selector: 'app-dashboard3',
   templateUrl: './dashboard3.component.html',
@@ -8,50 +9,95 @@ import { DadosService } from './../dados.service';
 })
 export class Dashboard3Component implements OnChanges {
 
-  //Variáveis que resultaram nos gráficos
-  private grafBar:any[];
-  private grafLine:any[];
-  private nomesLinhas:string[] = [];
-  private grafLinha:any[];
+  @Input()
+  private clientsData:any[] = [];
+  private areasData:any[] = [];
+
+  //Variáveis que resultarão nos gráficos
+  private pieChart:any[];
+  private bulletChart:any[];
+  private barChart:any[];
+  private donutChart:any[];
 
   //Variáveis auxiliares
-  private  consulta: string = "match (e:Event)-[r:IN]->(p:Page) return p.host, e.date limit 5";
-  private dados:any[];
+  private axisNamesBullet: string[];
+  private axisNamesBar: string[];
+  private bulletHeight = 250;
   private card1:string[];
   private card2:string[];
   private card3:string[];
   private card4:string[];
-  private linha:any[];
+  private colors:any[];
 
-  constructor(private neo4j: AngularNeo4jService, private _dados: DadosService) { 
+  constructor(private _dados: DadosService, private _tooltip: TooltipService) { 
+    this.cardsAjust();
     this.obDados();
   }
 
   ngOnChanges() {
+    if(!this.clientsData)
+      return;
+    this.obDados();
   }
 
   private async obDados(){
-    await this.obtemDados(this.consulta);
+    await this.obtemDados();
     this._dados.closeConnection();
+    this.areasData = this._tooltip.convertClientsDataToArea(this.clientsData);
+
+    this.donutAjust();
+    this.pieAjust();
+    this.bulletAjust();
+    this.barAjust();
+    this.cardInsertData();
+    this.fillAxis();
   }
 
-  private async obtemDados(consulta :string){
+  private async obtemDados(){
+    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
+  }
 
-    this.ajustaCard("Acessos", "42 Acessos", " test1",1);
-    this.ajustaCard("Aoba", "2 Acessos", " test2",2);
-    this.ajustaCard("Páginas", "31 Acessos", " teste3",3);
-    this.ajustaCard("Users", "32 Acessos", " teste4",4);
-    this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
-    this.ajustaArrayLinha();
-    this.dados = await this._dados.getDados(consulta);
+  private cardsAjust(){
+    this.cardAjust("", "", "",1);
+    this.cardAjust("", "", "",2);
+    this.cardAjust("", "", "",3);
+    this.cardAjust("", "", "",4);
+  }
+
+  private cardInsertData(){
+    var totalAreas;
+    totalAreas = this.areasData.length;
+    
+    var medEvents = 0;
+    var medCoherence = 0;
+    var medTime = 0; 
+    var medChoose = 0
+
+    this.areasData.forEach(element => {
+      medCoherence += element["Coherence"];
+      medEvents += element["Events"].length;
+      medTime += (element["Time"])/element["Clients"].length;
+      element["Clients"].forEach(data => {
+        medChoose += data["Choose"];
+      });
+    });
+    
+    medEvents /= totalAreas;
+    medCoherence /= totalAreas;
+    medChoose /= totalAreas
+
+    this.cardAjust("Coerência", "Média: " + medCoherence.toFixed(2), "Desvio Padrão: "+ this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), 1);
+    this.cardAjust("Eventos", "Média de Eventos: " + (medEvents).toFixed(2), "Desvio Padrão: " + this.calcDeviationEvents(medEvents, totalAreas).toFixed(2),2);
+    this.cardAjust("Tempo", "Média de Tempo: "+(medTime).toFixed(2)+" minutos", "Desvio Padrão: " + this.calcDeviationTime(medTime, totalAreas).toFixed(2), 3);
+    this.cardAjust("Escolha", "Média de escolha: " + (medChoose).toFixed(2), "Desvio Padrão: " + this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), 4);
     
   }
 
-  private ajustaCard(nomeCard:string, valorCard:string, attExtra:string, cardOpt){
+  private cardAjust(cardName:string, cardValue:string, attExtra:string, cardOpt){
     var lista:string[] = [];
     
-    lista.push(nomeCard);
-    lista.push(valorCard);
+    lista.push(cardName);
+    lista.push(cardValue);
     lista.push(attExtra);
 
     if(cardOpt == 1)
@@ -64,37 +110,175 @@ export class Dashboard3Component implements OnChanges {
       this.card4 = lista;
   }
 
-  private ajustaArrayLinha(){
-    this.grafLinha = [];
-    var str:string[];
-    this.linha.forEach(element => {//Obtem os nomes dos navegadores
-      str = element[1].split("(");
-      str = str[1].split(";");
-      str = str[0].split(" ");
-      if(!this.nomesLinhas.includes(str[0]))
-        this.nomesLinhas.push(str[0]);
+  private fillAxis(){
+    this.axisNamesBullet = [];
+    this.axisNamesBar = [];
+
+    this.axisNamesBullet.push("Coerência");
+    this.axisNamesBullet.push("Áreas");
+    
+    this.axisNamesBar.push("Áreas");
+    this.axisNamesBar.push("Tempo Médio por Cliente");
+    
+    this.colors = [];
+    this.colors.push("#F1C40F");
+    this.colors.push("#2980B9");
+    this.colors.push("#2ECC71");
+    this.colors.push("#E74C3C");
+    this.colors.push("#ECF0F1");
+    this.colors.push("#7D3C98");
+  }
+
+  private bulletAjust(){
+    var arr;
+    this.bulletChart = [];
+
+    this.areasData.forEach(element => {
+      arr = [];
+      arr.push(element["Name"]);
+      arr.push(element["Coherence"]);
+      this.bulletChart.push(arr);
     });
 
-    this.linha.forEach(element => {
-      if(!this.grafLinha.find(ele => ele[0] == element[0])){  
-        var obj:any[] = [];
-        obj.push(element[0]);
-        obj.push(0);
-        obj.push(0);
-        obj.push(0);
-        for(var i = this.linha.indexOf(element); i < this.linha.length; i++){
-          if(element[0] == this.linha[i][0]){
-            str = this.linha[i][1].split("(");
-            str = str[1].split(";");
-            str = str[0].split(" ");
-            obj[this.nomesLinhas.indexOf(str[0])+1] = this.linha[i][2];
-          }
+  }
+
+  private pieAjust(){
+    var arr:any[], cont;
+    this.pieChart = [];
+    this.areasData.forEach(element => {
+      arr = [];
+      cont = 0;
+      element["Clients"].forEach(data => {
+        cont += data["Choose"];
+      });
+
+      arr.push(element["Name"]);
+      arr.push(cont);
+      this.pieChart.push(arr);
+    });
+  }
+
+  private donutAjust(){
+    var arr:any;
+    this.donutChart = [];
+
+    this.areasData.forEach(element => {
+      arr = [];
+      arr.push(element["Name"]);
+      arr.push(element["Events"].length);
+      this.donutChart.push(arr);
+    });
+  }
+
+  private barAjust(){
+    var arr;
+    this.barChart = [];
+
+    this.areasData.forEach(element => {
+      arr = [];
+      arr.push(element["Name"]);
+      arr.push(element["Time"]/element["Clients"].length);
+      this.barChart.push(arr);
+    });
+  }
+
+  private calcDeviationTime(medium, total){
+    var deviation = 0;
+    this.areasData.forEach(element => {
+      deviation += Math.pow(element["Time"] - medium , 2);// faz a conta para balancear novamente os minutos, ja que timeMed esta em milisegundos
+    }); 
+
+    deviation /= total;
+    deviation = Math.pow(deviation, 1/2);
+
+    return deviation; 
+  }
+
+  private calcDeviationCoherence(medium, total){
+    var deviation = 0;
+
+    this.areasData.forEach(element => {
+      deviation += Math.pow(element["Coherence"]-medium, 2) ;
+    });
+
+    deviation /= total;
+    deviation = Math.pow(deviation, 1/2);
+
+    return deviation;
+  }
+
+  private calcDeviationChoose(medium, total){
+    var deviation = 0, test:boolean, lengthChoose;
+    var events:any[];
+    var arr:any[];
+
+    events = [];
+
+    this.areasData.forEach(element => {
+      test = false;
+      lengthChoose = 0;
+      element["Clients"].forEach(data => {
+        lengthChoose += data["Choose"];
+      });
+      events.forEach(data => {
+        if(data[0] == lengthChoose){
+          data[1] ++;
+          test = true;
         }
-        this.grafLinha.push(obj);
+      });
+
+      if(!test){
+        arr = [];
+        arr.push(lengthChoose);
+        arr.push(1);
+        events.push(arr);
       }
     });
-    console.log(this.grafLinha);
+    
+    events.forEach(element => {
+      deviation += Math.pow(element[0] - medium, 2)*element[1];
+    });
+
+    deviation /= total;
+    deviation = Math.pow(deviation, 1/2);
+
+    return deviation;
   }
-  
+
+  private calcDeviationEvents( medium, total){
+    var deviation = 0, test:boolean, lengthEvents;
+    var events:any[];
+    var arr:any[];
+
+    events = [];
+
+    this.areasData.forEach(element => {
+      test = false;
+      lengthEvents = element["Events"].length;
+      events.forEach(data => {
+        if(data[0] == lengthEvents){
+          data[1] ++;
+          test = true;
+        }
+      });
+
+      if(!test){
+        arr = [];
+        arr.push(lengthEvents);
+        arr.push(1);
+        events.push(arr);
+      }
+    });
+    
+    events.forEach(element => {
+      deviation += Math.pow(element[0] - medium, 2)*element[1];
+    });
+
+    deviation /= total;
+    deviation = Math.pow(deviation, 1/2);
+
+    return deviation;
+
+  }
 
 }

@@ -62,8 +62,8 @@ export class BulletChartComponent implements OnChanges {
       .domain([0, d3.max(data, (d, i) => this.dados[i][1])]);*/
 
     const colorScale = d3.scaleOrdinal()
-      .domain(["2", "1", "0"])
-      .range([this.colors[0], this.colors[1], this.colors[2]]);
+      .domain(["0", "1", "2", "3", "4", "5"])
+      .range([this.colors[0], this.colors[1], this.colors[2], this.colors[3], this.colors[4], this.colors[5],]);
 
     const color:string[] = this.colors;
 
