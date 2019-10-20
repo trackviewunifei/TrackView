@@ -8,7 +8,7 @@ import * as d3 from 'd3';
 })
 export class BubbleChartComponent implements OnChanges {
 
-  @ViewChild('chart')
+  @ViewChild('chart', {static:false})
   private chartContainer: ElementRef;
   
   @Input()
@@ -74,10 +74,10 @@ export class BubbleChartComponent implements OnChanges {
         svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
         .attr("x", contentWidth)
-        .attr("y", contentHeight + 68)
+        .attr("y", contentHeight + 80)
         .text(this.axisNames[0])
         .style("font-size", 10)
-        .style("fill", "#D7DBDD");
+        .style("fill", "#69a3b2");
 
     g.append("g")//Atribui os valores ao eixo vertical
         .attr("class", "axis axis--y")
@@ -86,7 +86,7 @@ export class BubbleChartComponent implements OnChanges {
         .attr("y", -15)
         .attr("x", 100)
         .attr("dy", "0.71em")
-        .attr("fill", "#D7DBDD")
+        .attr("fill", "#69a3b2")
         .text(this.axisNames[1]);
 
     g.append("path")

@@ -58,10 +58,10 @@ export class Dashboard3Component implements OnChanges {
   }
 
   private cardsAjust(){
-    this.cardAjust("", "", "",1);
-    this.cardAjust("", "", "",2);
-    this.cardAjust("", "", "",3);
-    this.cardAjust("", "", "",4);
+    this.cardAjust("", "", "", "", "",1);
+    this.cardAjust("", "", "","", "", 2);
+    this.cardAjust("", "", "","", "",3);
+    this.cardAjust("", "", "","", "",4);
   }
 
   private cardInsertData(){
@@ -86,19 +86,21 @@ export class Dashboard3Component implements OnChanges {
     medCoherence /= totalAreas;
     medChoose /= totalAreas
 
-    this.cardAjust("Coerência", "Média: " + medCoherence.toFixed(2), "Desvio Padrão: "+ this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), 1);
-    this.cardAjust("Eventos", "Média de Eventos: " + (medEvents).toFixed(2), "Desvio Padrão: " + this.calcDeviationEvents(medEvents, totalAreas).toFixed(2),2);
-    this.cardAjust("Tempo", "Média de Tempo: "+(medTime).toFixed(2)+" minutos", "Desvio Padrão: " + this.calcDeviationTime(medTime, totalAreas).toFixed(2), 3);
-    this.cardAjust("Escolha", "Média de escolha: " + (medChoose).toFixed(2), "Desvio Padrão: " + this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), 4);
+    this.cardAjust("Coerência", (100*medCoherence).toFixed(2)+"%", " Média por área", (this.calcDeviationCoherence(medCoherence, totalAreas)*100).toFixed(2)+"%", " Desvio Padrão", 1);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), " Média por área", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " Desvio Padrão ",2);
+    this.cardAjust("Tempo", (medTime).toFixed(2) +" minutos", "Média por área", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " Desvio Padrão ", 3);
+    this.cardAjust("Escolha", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), " Desvio Padrão", 4);
     
   }
 
-  private cardAjust(cardName:string, cardValue:string, attExtra:string, cardOpt){
+  private cardAjust(cardName:string, cardValue:string, info:string, extraInfo:string, extraValue:string, cardOpt){
     var lista:string[] = [];
     
     lista.push(cardName);
     lista.push(cardValue);
-    lista.push(attExtra);
+    lista.push(info);
+    lista.push(extraInfo);
+    lista.push(extraValue);
 
     if(cardOpt == 1)
       this.card1 = lista;
@@ -126,7 +128,7 @@ export class Dashboard3Component implements OnChanges {
     this.colors.push("#2ECC71");
     this.colors.push("#E74C3C");
     this.colors.push("#ECF0F1");
-    this.colors.push("#7D3C98");
+    this.colors.push("#AEB6BF");
   }
 
   private bulletAjust(){

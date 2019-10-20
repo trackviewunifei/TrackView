@@ -72,26 +72,28 @@ export class Dashboard5Component implements OnChanges {
   }
 
   private cardsAjust(){
-    this.cardAjust("", "", "",1);
-    this.cardAjust("", "", "",2);
-    this.cardAjust("", "", "",3);
-    this.cardAjust("", "", "",4);
+    this.cardAjust("", "", "", "", "",1);
+    this.cardAjust("", "", "","", "", 2);
+    this.cardAjust("", "", "","", "", 3);
+    this.cardAjust("", "", "","", "", 4);
   }
 
   private cardInsertData(){
-    this.cardAjust("Usuários", this.group1Data.length+" Usuários G1", this.group2Data.length + " Usuários G2", 1);
-    this.cardAjust("Eventos", "Média de Eventos G1: " + (this._tooltip.getAverageEventsPerClient(this.group1Data)).toFixed(2), "Média de Eventos G2: "+(this._tooltip.getAverageEventsPerClient(this.group2Data)).toFixed(2),2);
-    this.cardAjust("Tempo", "Média de Tempo G1: "+(this._tooltip.getAverageTime(this.group1Data)).toFixed(2)+" minutos", "Média de Tempo G2: " + (this._tooltip.getAverageTime(this.group2Data)).toFixed(2) +" minutos", 3);
-    this.cardAjust("Coerência", "Coerência G1: " + (this._tooltip.getAverageCoherence(this.group1Data)).toFixed(2), "Coerência G2: " + (this._tooltip.getAverageCoherence(this.group2Data)).toFixed(2), 4);
+    this.cardAjust("Usuários", this.group1Data.length+ "", " Usuários G1", this.group2Data.length + "", " Usuários G2", 1);
+    this.cardAjust("Eventos", (this._tooltip.getAverageEventsPerClient(this.group1Data)).toFixed(2), " Média de Eventos G1", (this._tooltip.getAverageEventsPerClient(this.group2Data)).toFixed(2), " Média de Eventos G2",2);
+    this.cardAjust("Tempo", (this._tooltip.getAverageTime(this.group1Data)).toFixed(2)+" minutos", " Média de Tempo G1", (this._tooltip.getAverageTime(this.group2Data)).toFixed(2) +" minutos", " Média de Tempo G2 ", 3);
+    this.cardAjust("Coerência", (this._tooltip.getAverageCoherence(this.group1Data)*100).toFixed(2)+"%", " Coerência G1", (this._tooltip.getAverageCoherence(this.group2Data)*100).toFixed(2)+"%", " Coerência G2", 4);
     
   }
 
-  private cardAjust(cardName:string, cardValue:string, attExtra:string, cardOpt){
+  private cardAjust(cardName:string, cardValue:string, info:string, extraInfo:string, extraValue:string, cardOpt){
     var lista:string[] = [];
     
     lista.push(cardName);
     lista.push(cardValue);
-    lista.push(attExtra);
+    lista.push(info);
+    lista.push(extraInfo);
+    lista.push(extraValue);
 
     if(cardOpt == 1)
       this.card1 = lista;

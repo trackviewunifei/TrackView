@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 })
 export class Graf1Component implements OnChanges {
 
-  @ViewChild('chart')
+  @ViewChild('chart', {static:false})
   private chartContainer: ElementRef;
   
   @Input()
@@ -107,8 +107,8 @@ export class Graf1Component implements OnChanges {
     svg.append("text")//Coloca o que o eixo y representa
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .attr("y", 20)
-        .attr("x", -100)
+        .attr("y", 16)
+        .attr("x", -50)
         .text(this.axisNames[1])
         .style("font-size", 12)
         .style("fill", "#69a3b2");

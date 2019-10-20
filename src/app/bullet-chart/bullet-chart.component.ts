@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 })
 export class BulletChartComponent implements OnChanges {
 
-  @ViewChild('chart')
+  @ViewChild('chart', {static:false})
   private chartContainer: ElementRef;
 
   @Input()
@@ -95,7 +95,7 @@ export class BulletChartComponent implements OnChanges {
     g.append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-55)")
+        .attr("transform", "translate(-10,-15)rotate(-45)")
         .style("text-anchor", "end")
         .style("font-size", 10)
         .style("fill",function (d, i) { return ""+colorScale(i+""); });

@@ -1,12 +1,7 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div class="container">
-  <select (change)="onChange($event)">
-    <option>Dashboard 1</option>
-    <option>Dashboard 2</option>
-    <option>Dashboard 3</option>
-  </select>
+<app-nav><router-outlet></router-outlet></app-nav>
 
-  <app-dashboard3 [clientsData]="dadosClients"></app-dashboard3>
+
+<div class="container">
   
   <!--
   <app-dashboard3 [clientsData]="dadosClients"></app-dashboard3>
@@ -108,5 +103,3 @@
   </div>
   -->
 </div>
-
-<router-outlet></router-outlet>

@@ -33,7 +33,7 @@ export class Dashboard4Component implements OnChanges {
   private startTime;
   private endTime;
 
-  constructor(private _dados: DadosService, private _tooltip: TooltipService) { 
+  constructor(private _dados: DadosService, private _tooltip: TooltipService) {
     this.cardsAjust();
     this.obDados();
   }
@@ -63,10 +63,10 @@ export class Dashboard4Component implements OnChanges {
   }
 
   private cardsAjust(){
-    this.cardAjust("", "", "",1);
-    this.cardAjust("", "", "",2);
-    this.cardAjust("", "", "",3);
-    this.cardAjust("", "", "",4);
+    this.cardAjust("", "", "", "", "",1);
+    this.cardAjust("", "", "","", "", 2);
+    this.cardAjust("", "", "","", "",3);
+    this.cardAjust("", "", "","", "",4);
   }
 
   private cardInsertData(){
@@ -89,19 +89,21 @@ export class Dashboard4Component implements OnChanges {
     medCoherence = this._tooltip.getAverageCoherence(this.clientsData);
     medTime = this.calcMedTime();
 
-    this.cardAjust("Usuários", cardValue+" Usuários Diferentes", "Coerência >= 60%: "+ (cardExtra)+" usuários, Menor: "+(cardValue-cardExtra) +" usuários", 1);
-    this.cardAjust("Eventos", "Média de Eventos: " + (medEvents).toFixed(2), "Desvio Padrão: " + this.calcDeviationEvents(medEvents, cardValue).toFixed(2),2);
-    this.cardAjust("Tempo", "Média de Tempo: "+(medTime).toFixed(2)+" minutos", "Desvio Padrão: " + this.calcDeviationTime(medTime, cardValue).toFixed(2), 3);
-    this.cardAjust("Coerência", "Média da Coerências das respostas: " + (medCoherence).toFixed(2), "Desvio Padrão: " + this.calcDeviationCoherence(medCoherence, cardValue).toFixed(2), 4);
+    this.cardAjust("Usuários", (cardExtra), " usuários com Coerência >= 60%", (cardValue-cardExtra) + "", " usuários com Menor que 60% ", 1);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " Desvio Padrão ",2);
+    this.cardAjust("Tempo", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " Desvio Padrão ", 3);
+    this.cardAjust("Coerência", (medCoherence*100).toFixed(2)+"%", " Média dos usuários", (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2) + "%", " Desvio Padrão", 4);
     
   }
 
-  private cardAjust(cardName:string, cardValue:string, attExtra:string, cardOpt){
+  private cardAjust(cardName:string, cardValue:string, info:string, extraInfo:string, extraValue:string, cardOpt){
     var lista:string[] = [];
     
     lista.push(cardName);
     lista.push(cardValue);
-    lista.push(attExtra);
+    lista.push(info);
+    lista.push(extraInfo);
+    lista.push(extraValue);
 
     if(cardOpt == 1)
       this.card1 = lista;
@@ -160,12 +162,12 @@ export class Dashboard4Component implements OnChanges {
     med += timeMinus/contMinus;
     med /= 2;
 
-    obj.push("Mais de 60% de coerência");
+    obj.push("Coerência >= 60%");
     obj.push(timePlus/contPlus);
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Menos de 60% de coerência");
+    obj.push("Coerência < 60%");
     obj.push(timeMinus/contMinus);
     this.bulletChart.push(obj);
 

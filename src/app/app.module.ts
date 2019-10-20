@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AngularNeo4jModule } from 'angular-neo4j';
 
 import { HttpClientModule } from '@angular/common/http';
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Graf1Component } from './graf1/graf1.component';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
@@ -16,10 +16,15 @@ import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
 import { TableComponent } from './table/table.component';
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
-import { Dashboard3Component } from './dashboard3/dashboard3.component';
 import { CardComponent } from './card/card.component';
-import { Dashboard4Component } from './dashboard4/dashboard4.component';
-import { Dashboard5Component } from './dashboard5/dashboard5.component'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NavComponent } from './nav/nav.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list'
 
 @NgModule({
   declarations: [
@@ -34,16 +39,15 @@ import { Dashboard5Component } from './dashboard5/dashboard5.component'
     TableComponent,
     Dashboard1Component,
     Dashboard2Component,
-    Dashboard3Component,
     CardComponent,
-    Dashboard4Component,
-    Dashboard5Component
+    NavComponent,
+    routingComponents
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularNeo4jModule, 
-    HttpClientModule
+    HttpClientModule, NoopAnimationsModule, LayoutModule, MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule
   ],
   providers: [DadosService],
   bootstrap: [AppComponent]

@@ -44,7 +44,7 @@ export class AppComponent {
   private cons2:any[];
   private cons3:any[];
   private cons4:any[];
-
+  private choosenArea:string;
   dash1:boolean = true;
   dash2:boolean = false;
   dash3:boolean = false;
@@ -53,6 +53,7 @@ export class AppComponent {
     this.data = this.http.get<DataModel>('./assets/data.json');
     this.myData = this.http.get<MyDataModel>('./assets/mydata.json');
     this.lineData = this.http.get<LineModel>('./assets/line.json');
+    this.choosenArea = "Gaming";
     this.obDados();
   }
 
