@@ -21,7 +21,7 @@ export class Graf1Component implements OnChanges {
   @Input()
   private colors:string[] = [];
 
-  margin = {top: 20, right: 20, bottom: 70, left: 50};
+  margin = {top: 20, right: 20, bottom: 90, left: 60};
 
   constructor() { }
 
@@ -73,18 +73,16 @@ export class Graf1Component implements OnChanges {
       .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)")
         .style("text-anchor", "end")
-        .style("font-size", 10)
+        .style("font-size", 14)
         .style("fill", function (d, i) { return ""+colorScale(i+""); });
 
     g.append('g')//Preenche o eixo y
       .attr('class', 'axis axis--y')
       .call(d3.axisLeft(y))
-      .append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr("y", 0 - this.margin.left)
-        .attr('dy', '0.31em')
-        .attr('text-anchor', 'middle')
-        .text('Quantidade');
+      .selectAll('text')
+        .style("text-anchor", "end")
+        .style("font-size", 14)
+        .style("fill", "#D7DBDD");
 
     g.selectAll('.bar')//Preenche o grafico com as barras
       .data(data)
@@ -101,16 +99,16 @@ export class Graf1Component implements OnChanges {
         .attr("x", contentWidth+25)
         .attr("y", contentHeight + this.margin.top + 55)
         .text(this.axisNames[0])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
 
     svg.append("text")//Coloca o que o eixo y representa
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
         .attr("y", 16)
-        .attr("x", -50)
+        .attr("x", -30)
         .text(this.axisNames[1])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
   }
 

@@ -117,7 +117,7 @@ export class DonutChartComponent implements OnChanges{
           .style('text-anchor', function(d) {
             return (midAngle(d)) < Math.PI ? 'start' : 'end';
         })
-        .style("font-size", 12)
+        .style("font-size", 16)
         .style("fill", "#69a3b2");
 
       arcSelection.append("polyline")//Atribui as linhas para os tipos
@@ -130,6 +130,16 @@ export class DonutChartComponent implements OnChanges{
       function onMouseEnter(datum){
         console.log("aoba");
         tooltip.style("opacity", 1)
+        tooltip.select("#range")
+        .text([
+            datum.x0 < 0
+              ? `Under-estimated by`
+              : `Over-estimated by`,
+          Math.abs(datum.x0),
+          "to",
+          Math.abs(datum.x1),
+          "hours",
+        ].join(" "))
       }
 
       function onMouseLeave(){

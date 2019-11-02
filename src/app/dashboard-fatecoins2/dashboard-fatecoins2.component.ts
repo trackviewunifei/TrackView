@@ -1,13 +1,13 @@
-import { Component, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { DadosService } from '../dados.service';
 import { TooltipService } from '../tooltip.service';
 
 @Component({
-  selector: 'app-dashboard5',
-  templateUrl: './dashboard5.component.html',
-  styleUrls: ['./dashboard5.component.css']
+  selector: 'app-dashboard-fatecoins2',
+  templateUrl: './dashboard-fatecoins2.component.html',
+  styleUrls: ['./dashboard-fatecoins2.component.css']
 })
-export class Dashboard5Component implements OnChanges {
+export class DashboardFatecoins2Component implements OnChanges {
 
   @Input()
   private group1Data:any[] = [];
@@ -390,3 +390,4 @@ export class Dashboard5Component implements OnChanges {
   }
 
 }
+

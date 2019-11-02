@@ -1,20 +1,8 @@
 
 <div class="row" style="max-width: 88rem;">
-  <div class="col-sm-6 col-md-6 col-lg-6">
-    <h1 class="text-center">
-    <select class="text-info select-title" (change)="onChange($event)">
-      <option class="text-info" *ngFor = "let area of areasTitle">{{area}}</option>
-    </select>
-    </h1>
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <h1 class="text-info text-center">Clientes</h1>
   </div>
-  <div class="col-sm-6 col-md-6 col-lg-6">
-    <div class="btn-group">
-      <button type="button" clicked="true" class="btn text-info border-info bg-dark">Hoje</button>
-      <button type="button" class="btn text-info border-info bg-dark">Este Mês</button>
-      <button type="button" class="btn text-info border-info bg-dark">Este Ano</button>
-    </div>
-  </div>
-
   <div class="col-sm-6 col-md-3 col-lg-3">
     <app-card [strings]="card1"></app-card>
   </div>
@@ -41,7 +29,7 @@
     <div class="card text-white border-info bg-dark mb-3">
       <app-pie-chart [dados]="pieChart" [colors]="colors"></app-pie-chart>
       <div class="card-body">
-        <h5 class="card-title text-center">Proporção de Eventos</h5>
+        <h5 class="card-title text-center">Proporção de Coerência</h5>
       </div>
     </div>
   </div>

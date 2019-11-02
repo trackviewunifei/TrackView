@@ -200,4 +200,13 @@ export class TooltipService {
     });
   }
 
+  public getAreas(areaData:any[]){
+    var areas:any[] = [];
+    areaData.forEach(element => {
+      areas.push(element["Name"]);
+    });
+
+    return areas;
+  }
+
 }

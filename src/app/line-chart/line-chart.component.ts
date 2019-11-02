@@ -34,7 +34,7 @@ export class LineChartComponent implements OnChanges{
   @Input()
   private colors:string[] = [];
 
-  private margin = {top: 40, right: 20, bottom: 60, left: 40};
+  private margin = {top: 50, right: 20, bottom: 65, left: 40};
 
   constructor() { }
 
@@ -99,16 +99,16 @@ export class LineChartComponent implements OnChanges{
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(this.xScale))
         .selectAll("text")
-          .attr("transform", "translate(-10,10)rotate(-45)")
+          .attr("transform", "translate(-10,0)rotate(-45)")
           .style("text-anchor", "end")
-          .style("font-size", 10)
+          .style("font-size", 14)
           .style("fill", "#D7DBDD");
 
     this.svg.append("g")//Add y axis
         .attr("class", "y axis")
         .call(d3.axisLeft(this.yScale))
         .selectAll("text")
-          .style("font-size", 10)
+          .style("font-size", 14)
           .style("fill","#D7DBDD");
 
     this.line = d3.line()
@@ -164,10 +164,10 @@ export class LineChartComponent implements OnChanges{
           .append('g')
           .append("text")
             .attr('x', (d,i)=>{ return 50})
-            .attr('y', (d,i)=> -13*i)
+            .attr('y', (d,i)=> -15*i)
             .text((d)=> { return d.name; })
             .style("fill", (d)=>{ return myColor(d.name) })
-            .style("font-size", 12)
+            .style("font-size", 16)
           .on("click", (d)=>{
             var currentOpacity = d3.selectAll("." + d.name).style("opacity")
             // @ts-ignore
@@ -176,18 +176,18 @@ export class LineChartComponent implements OnChanges{
 
     this.svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
-        .attr("x", this.width - this.margin.left - this.margin.right)
-        .attr("y", this.height + 55)
+        .attr("x", this.width - this.margin.left - this.margin.right + 10)
+        .attr("y", this.height + 52)
         .text(this.axisNames[0])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
 
     this.svg.append("text")//Coloca o que o eixo y representa
         .attr("text-anchor", "top")
-        .attr("y", -5)
+        .attr("y", -9)
         .attr("x", -22)
         .text(this.axisNames[1])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
   }
 

@@ -111,7 +111,7 @@ export class PieChartComponent implements OnChanges {
           .style('text-anchor', function(d) {
             return (midAngle(d)) < Math.PI ? 'start' : 'end';
         })
-        .style("font-size", 12)
+        .style("font-size", 16)
         .style("fill", "#69a3b2");
 
       arcSelection.append("polyline")//Atribui as linhas para os tipos

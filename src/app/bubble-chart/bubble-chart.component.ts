@@ -25,7 +25,7 @@ export class BubbleChartComponent implements OnChanges {
 
   private dados:any[] = [];
 
-  private margin = {top: 50, right: 20, bottom: 30, left: 50};
+  private margin = {top: 50, right: 20, bottom: 50, left: 60};
 
   constructor() { }
 
@@ -68,26 +68,33 @@ export class BubbleChartComponent implements OnChanges {
         .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-30)")
         .style("text-anchor", "end")
-        .style("font-size", 10)
+        .style("font-size", 14)
         .style("fill", "#D7DBDD");
 
         svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
         .attr("x", contentWidth)
-        .attr("y", contentHeight + 80)
+        .attr("y", contentHeight + 92)
         .text(this.axisNames[0])
-        .style("font-size", 10)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
 
     g.append("g")//Atribui os valores ao eixo vertical
         .attr("class", "axis axis--y")
         .call(d3.axisLeft(y))
-      .append("text")
-        .attr("y", -15)
-        .attr("x", 100)
-        .attr("dy", "0.71em")
-        .attr("fill", "#69a3b2")
-        .text(this.axisNames[1]);
+      .selectAll("text")
+        .style("font-size", 14)
+        .style("fill", "#D7DBDD");
+     
+
+    svg.append("text")//Coloca o que o eixo y representa
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 16)
+        .attr("x", -30)
+        .text(this.axisNames[1])
+        .style("font-size", 14)
+        .style("fill", "#69a3b2");
 
     g.append("path")
       .datum(this.data)
@@ -134,7 +141,7 @@ export class BubbleChartComponent implements OnChanges {
         .attr("x", 180)
         .attr("y", 20)
         .text(this.areasName[0])
-        .style("font-size", 12)
+        .style("font-size", 16)
         .style("fill", this.colors[0])
         .attr("alignment-baseline","middle");
       
@@ -142,7 +149,7 @@ export class BubbleChartComponent implements OnChanges {
         .attr("x", 180)
         .attr("y", 40)
         .text(this.areasName[1])
-        .style("font-size", 12)
+        .style("font-size", 16)
         .style("fill", this.colors[1])
         .attr("alignment-baseline","middle");
           

@@ -34,7 +34,7 @@ export class RadarChartComponent implements OnChanges {
     const diameter = 600;
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    var margin = { top: 50, right: 80, bottom: 60, left: 80 },
+    var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     width = Math.min(900, window.innerWidth / 4) - margin.left - margin.right,
     height = Math.min(width, window.innerHeight - margin.top - margin.bottom);
     var data = this.data;
@@ -72,7 +72,7 @@ export class RadarChartComponent implements OnChanges {
     ];*/
     
     var radarChartOptions2 = {
-      w: 300,
+      w: 280,
       h: 220,
       margin: margin,
       maxValue: 7,
@@ -122,11 +122,11 @@ export class RadarChartComponent implements OnChanges {
     const cfg = {
       w: 600,				//Width of the circle
       h: 600,				//Height of the circle
-      margin: {top: 40, right: 40, bottom: 40, left: 40}, //The margins of the SVG
+      margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
       levels: 3,				//How many levels or inner circles should there be drawn
       maxValue: 0, 			//What is the value that the biggest circle will represent
-      labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
-      wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
+      labelFactor: 1.30, 	//How much farther than the radius of the outer circle should the labels be placed
+      wrapWidth: 70, 		//The number of pixels after which a label needs to be given a new line
       opacityArea: 0.35, 	//The opacity of the area of the blob
       dotRadius: 4, 			//The size of the colored circles of each blog
       opacityCircles: 0.1, 	//The opacity of the circles of each blob
@@ -228,7 +228,7 @@ export class RadarChartComponent implements OnChanges {
       .attr("x", 4)
       .attr("y", d => -d * radius / cfg.levels)
       .attr("dy", "0.4em")
-      .style("font-size", "10px")
+      .style("font-size", 14)
       .attr("fill", "gray")
       .text(d => Format(maxValue * d / cfg.levels) + cfg.unit);
 
@@ -255,7 +255,7 @@ export class RadarChartComponent implements OnChanges {
     //Append the labels at each axis
     axis.append("text")
       .attr("class", "legend")
-      .style("font-size", "11px")
+      .style("font-size", 14)
       .style("fill", "gray")
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
@@ -381,7 +381,7 @@ export class RadarChartComponent implements OnChanges {
       .attr("class", "tooltip")
       .attr('x', 0)
       .attr('y', 0)
-      .style("font-size", "12px")
+      .style("font-size", 14)
       .style('display', 'none')
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em");
@@ -397,7 +397,7 @@ export class RadarChartComponent implements OnChanges {
           .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY})`)
           .attr("x", cfg.w - 70)
           .attr("y", 10)
-          .attr("font-size", "12px")
+          .attr("font-size", 14)
           .attr("fill", "gray")
           // @ts-ignore
           .text(cfg.legend.title);
@@ -426,7 +426,7 @@ export class RadarChartComponent implements OnChanges {
         .append("text")
         .attr("x", cfg.w - 52)
         .attr("y", (d,i) => i * 20 + 9)
-        .attr("font-size", "11px")
+        .attr("font-size", 14)
         .attr("fill", "#737373")
         // @ts-ignore
         .text(d => d);

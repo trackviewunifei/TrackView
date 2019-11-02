@@ -24,7 +24,7 @@ export class BulletChartComponent implements OnChanges {
   @Input()
   private height;
 
-  private margin = {top: 20, right: 20, bottom: 40, left: 100};
+  private margin = {top: 20, right: 20, bottom: 50, left: 140};
 
   constructor() { }
 
@@ -88,7 +88,7 @@ export class BulletChartComponent implements OnChanges {
       .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-30)")
         .style("text-anchor", "end")
-        .style("font-size", 10)
+        .style("font-size", 14)
         .style("fill", "#D7DBDD");
 
     // add the y Axis
@@ -97,15 +97,15 @@ export class BulletChartComponent implements OnChanges {
       .selectAll("text")
         .attr("transform", "translate(-10,-15)rotate(-45)")
         .style("text-anchor", "end")
-        .style("font-size", 10)
+        .style("font-size", 14)
         .style("fill",function (d, i) { return ""+colorScale(i+""); });
 
     svg.append("text")//Coloca o que o eixo x representa
         .attr("text-anchor", "middle")
         .attr("x", contentWidth + 75)
-        .attr("y", contentHeight + this.margin.top + 35)
+        .attr("y", contentHeight + this.margin.top + 45)
         .text(this.axisNames[0])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
 
     svg.append("text")//Coloca o que o eixo y representa
@@ -113,7 +113,7 @@ export class BulletChartComponent implements OnChanges {
         .attr("y", 15)
         .attr("x", 55)
         .text(this.axisNames[1])
-        .style("font-size", 12)
+        .style("font-size", 14)
         .style("fill", "#69a3b2");
   }
   

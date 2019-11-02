@@ -1,14 +1,13 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { DadosService } from '../dados.service';
 import { TooltipService } from '../tooltip.service';
-import { FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-dashboard6',
-  templateUrl: './dashboard6.component.html',
-  styleUrls: ['./dashboard6.component.css']
+  selector: 'app-dashboard-fatecoins4',
+  templateUrl: './dashboard-fatecoins4.component.html',
+  styleUrls: ['./dashboard-fatecoins4.component.css']
 })
-export class Dashboard6Component implements OnChanges {
+export class DashboardFatecoins4Component implements OnChanges {
 
   @Input()
   private clientsData:any[] = [];
