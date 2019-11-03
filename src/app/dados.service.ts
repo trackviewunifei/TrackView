@@ -261,4 +261,100 @@ export class DadosService {
   }
 
 
+  //---------------------SECTION OF FATEC DASHBOARDS------------------------------
+  public async getEventsFatec(query:string){
+
+    if(this.eventsQuery == query)
+      return this.clientsData;
+    
+    this.eventsQuery = query;
+    this.dadosClientes = await this.getDados(this.eventsQuery);
+    await this.readEventsFatec();
+    return this.clientsData;
+  }
+
+  private async readEventsFatec(){
+    this.clientsData = new Array();
+    var obj, arr:any = [];
+    this.dadosClientes.forEach(element => {
+      arr = this.divideEvents(element[1])
+      obj = new Object();
+      obj["Name"] = element[0];
+      obj["Pages"] = this.getPages(element[1]);
+      obj["Events"] = arr;
+      obj["TotalTime"] = this.getTotalTime(arr);
+      obj["TotalEvents"] = element[1].length;
+      this.clientsData.push(obj);
+      
+    });
+    console.log(this.clientsData);
+  }
+
+  private getPages(elements: any[]){
+    var pages:string[] = [], page;
+    elements.forEach(element => {
+      page = this.convert_page_name(element[1]);
+      if (!pages.includes(page))
+        pages.push(page);
+
+    });
+
+    return pages;
+  }
+
+  private getTotalTime(elements: any[]){
+    var time = 0;
+    var data1, data2;
+    for(var i = 0; i < elements.length; i ++){
+      data1 = new Date(elements[i]["EventsData"][0][0]);
+      data2 = new Date(elements[i]["EventsData"][elements[i]["EventsData"].length-1][0]);
+      time += data2.getTime() - data1.getTime();
+    }
+
+    time /= 1000;
+    time /= 60;
+    return time;
+  }
+
+  private divideEvents(clientData: any[]){
+    var events:any[] = []
+    var i, j;
+    var obj, data: string[];
+
+    clientData.forEach(element => {
+      j = -1;
+      for(i = 0; i < events.length; i++)
+        if(element[0].includes(events[i]["Date"])){
+          j = 1;
+          break;
+        }
+            
+      if(j == -1){
+        obj = new Object();
+        data = element[0].split(":");
+        obj["Date"] = data[0];
+        obj["EventsData"] = [];
+        obj["EventsData"].push(element);
+        events.push(obj);
+      }else
+        events[i]["EventsData"].push(element);
+         
+    });
+
+    return events;
+  }
+
+  private convert_page_name(pag:string){
+    if(pag.includes("cart"))
+      return "Cart";
+    else if(pag.includes("login"))
+      return "Login";
+    else if(pag.includes("checkout"))
+      return "Checkout";
+    else if(pag.includes("Oferta"))
+      return "Oferta";
+    else
+      return "Demais";
+  }
+
 }

@@ -59,7 +59,7 @@ export class DashboardFatecoins1Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
+    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-30' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
   }
 
   private cardsAjust(){
@@ -75,24 +75,25 @@ export class DashboardFatecoins1Component implements OnChanges {
     cardExtra = 0;
     
     var medEvents = 0;
-    var medCoherence = 0;
+    var numPages = 0;
     var medTime = 0; 
 
     this.clientsData.forEach(element => {
-      if(element["CoherenceValue"] >= 0.6)
+      if(element["Pages"].includes("Checkout")){
         cardExtra ++;
-      medCoherence += element["CoherenceValue"];
-      medEvents += element["InfoEvents"]["Events"].length;
+        numPages += element["Pages"].length;
+      }
+      medTime += element["TotalTime"]; 
+      medEvents += element["TotalEvents"];
     });
     
     medEvents /= cardValue;
-    medCoherence = this._tooltip.getAverageCoherence(this.clientsData);
-    medTime = this.calcMedTime();
+    medTime /= cardValue;
 
-    this.cardAjust("Usuários", (cardExtra), " usuários com Coerência >= 60%", (cardValue-cardExtra) + "", " usuários com Menor que 60% ", 1);
+    this.cardAjust("Usuários", (cardExtra), " usuários que compraram", (cardValue-cardExtra) + "", " usuários que não compraram ", 1);
     this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " Desvio Padrão ",2);
     this.cardAjust("Tempo", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Coerência", (medCoherence*100).toFixed(2)+"%", " Média dos usuários", (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2) + "%", " Desvio Padrão", 4);
+    this.cardAjust("Coerência", (cardExtra/cardValue*100).toFixed(2)+"%", " dos usuários",  (numPages/cardExtra).toFixed(2), " Média de Páginas acessadas", 4);
     
   }
 
@@ -120,13 +121,13 @@ export class DashboardFatecoins1Component implements OnChanges {
     this.axisNamesBullet = [];
     this.axisNamesLine = [];
 
-    this.axisNamesArea.push("Tempo");
+    this.axisNamesArea.push("Tempo (dias)");
     this.axisNamesArea.push("Média de eventos por usuários");
 
     this.axisNamesBullet.push("Tempo (minutos)");
     this.axisNamesBullet.push("Tipo");
     
-    this.axisNamesLine.push("Tempo");
+    this.axisNamesLine.push("Tempo (dias)");
     this.axisNamesLine.push("Eventos");
     
     this.colors = [];
@@ -139,35 +140,28 @@ export class DashboardFatecoins1Component implements OnChanges {
     this.bulletChart = [];
     var contPlus = 0, contMinus = 0;
     var timePlus = 0, timeMinus = 0, med = 0;
-    var obj = [], data1, data2;
+    var obj = [];
 
     this.clientsData.forEach(element => {
-      data1 = new Date(element["InfoEvents"]["firstEvent"]);
-      data2 = new Date(element["InfoEvents"]["lastEvent"]);
-      if(element["CoherenceValue"] >= 0.6){
-        timePlus += data2.getTime() - data1.getTime(); 
+      if(element["Pages"].includes("Checkout")){
+        timePlus += element["TotalTime"]; 
         contPlus ++;
       }else{
-        timeMinus += data2.getTime() - data1.getTime(); 
+        timeMinus += element["TotalTime"]; 
         contMinus ++;
       }
     }); 
-    
-    timePlus /= 1000;//Ajustes visto que o tempo obtido esta em milisegundos
-    timePlus /= 60;
-    timeMinus /= 1000;
-    timeMinus /= 60;
 
-    med = timePlus/contPlus;
-    med += timeMinus/contMinus;
-    med /= 2;
+    med = timePlus;
+    med += timeMinus;
+    med /= contPlus+contMinus;
 
-    obj.push("Coerência >= 60%");
+    obj.push("Compraram");
     obj.push(timePlus/contPlus);
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Coerência < 60%");
+    obj.push("Não Compraram");
     obj.push(timeMinus/contMinus);
     this.bulletChart.push(obj);
 
@@ -184,19 +178,19 @@ export class DashboardFatecoins1Component implements OnChanges {
     var obj = [];
 
     this.clientsData.forEach(element => {
-      if(element["CoherenceValue"] >= 0.6)
+      if(element["Pages"].includes("Checkout"))
         contPlus ++;
       else
         contMinus ++;
     }); 
     
-    obj.push("Mais de 60%");
+    obj.push("Compraram");
     obj.push(contPlus);
 
     this.pieChart.push(obj);
     obj = [];
 
-    obj.push("Menos de 60%");
+    obj.push("Não Compraram");
     obj.push(contMinus);
 
     this.pieChart.push(obj);
@@ -204,16 +198,18 @@ export class DashboardFatecoins1Component implements OnChanges {
 
   private areaAjust(){
     var arr:any[], areas:any[], dateAux:Date, stateArray:any [];
+    var date, month;
     this.areaChart = [], i;
     
     stateArray = [];
     areas = [];
     
-    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 86400000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);
       stateArray.push(0);
       arr = [];//pre aloca o vetor que conterá os dados
-      arr.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      month = dateAux.getMonth()+1;
+      arr.push(dateAux.getDate()+"/"+month);
       arr.push(0);
       arr.push(0);
       arr.push(0);
@@ -222,17 +218,18 @@ export class DashboardFatecoins1Component implements OnChanges {
     }
     
     this.clientsData.forEach(element => {
-      element["InfoEvents"]["Events"].forEach(event => {
+      element["Events"].forEach(event => {
         i = 0;
         areas.forEach(data => {
-          if(event[0].includes(data[0])){
-            if(element["CoherenceValue"] >= 0.6)
-              data[1] += 1;
+          date = data[0].split("/");
+          if(event["Date"].includes(date[1] + "-" + date[0])){
+            if(element["Pages"].includes("Checkout"))
+              data[1] += event["EventsData"].length;
             else
-              data[2] += 1;
+              data[2] += event["EventsData"].length;
 
             if(stateArray[i] == 0){
-              if(element["CoherenceValue"] >= 0.6){
+              if(element["Pages"].includes("Checkout")){
                 stateArray[i] = 3;
                 data[stateArray[i]] += 1;
               }else{
@@ -259,25 +256,25 @@ export class DashboardFatecoins1Component implements OnChanges {
     });
 
     this.areasNames = [];
-    this.areasNames.push("Mais de 60% de coerência");
-    this.areasNames.push("Menos de 60% de coerência");
+    this.areasNames.push("Compraram");
+    this.areasNames.push("Não Compraram");
 
     this.areaChart = areas;
   }
 
   private lineAjust(){
-    var obj;
-    var dateAux;
+    var obj, date;
+    var dateAux, month;
     this.lineChart = [];
 
-    this.nomesLinhas.push("Mais de 60% de coerência");
-    this.nomesLinhas.push("Menos de 60% de coerência");
+    this.nomesLinhas.push("Compraram");
+    this.nomesLinhas.push("Não Compraram");
     this.nomesLinhas.push("Média");
-    
-    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 86400000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);
       obj = [];//pre aloca o vetor que conterá os dados
-      obj.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      month = dateAux.getMonth()+1;
+      obj.push(dateAux.getDate()+"/"+month);
       obj.push(0);
       obj.push(0);
       obj.push(0);
@@ -285,15 +282,16 @@ export class DashboardFatecoins1Component implements OnChanges {
     }
 
     this.clientsData.forEach(element => {// para cada cliente irá percorrer seus eventos e lançar a qual posição eles pertencem
-      element["InfoEvents"]["Events"].forEach(event => {
+      element["Events"].forEach(event => { 
         this.lineChart.forEach(data => {
-          if(event[0].includes(data[0])){
-            if(element["CoherenceValue"] >= 0.6)
-              data[1] += 1;
+          date = data[0].split("/");
+          if(event["Date"].includes(date[1]+"-"+date[0])){
+            if(element["Pages"].includes("Checkout"))
+              data[1] += event["EventsData"].length;
             else
-              data[2] += 1;
+              data[2] += event["EventsData"].length;
 
-            data[3] += 1;
+            data[3] += event["EventsData"].length;
           }
         });
       });      
@@ -308,13 +306,12 @@ export class DashboardFatecoins1Component implements OnChanges {
     var firstEvent = 0, lastEvent = 0; 
     var data1, data2;
     
-    data1 = new Date(this.clientsData[0]["InfoEvents"]["firstEvent"])
+    data1 = new Date(this.clientsData[0]["Events"][0]["EventsData"][0][0])
     firstEvent = data1.getTime();
     //Obter Menor e maior evento
     this.clientsData.forEach(element => {
-      data1 = new Date(element["InfoEvents"]["firstEvent"]);
-      data2 = new Date(element["InfoEvents"]["lastEvent"]);
-      
+      data1 = new Date(element["Events"][0]["EventsData"][0][0]);
+      data2 = new Date(element["Events"][element["Events"].length-1]["EventsData"][element["Events"][element["Events"].length-1]["EventsData"].length-1][0]);
       if(data2.getTime() > lastEvent)
         lastEvent = data2.getTime();
       
@@ -329,55 +326,16 @@ export class DashboardFatecoins1Component implements OnChanges {
     this.endTime = this.dataAjust(data2);
   }
 
-  private calcMedTime(){
-    var contMed = 0;
-    var timeMed = 0;
-    var data1, data2;
-
-    this.clientsData.forEach(element => {
-      data1 = new Date(element["InfoEvents"]["firstEvent"]);
-      data2 = new Date(element["InfoEvents"]["lastEvent"]);
-      timeMed += data2.getTime() - data1.getTime(); 
-      contMed ++;
-    }); 
-    
-    timeMed /= 1000;
-    timeMed /= 60;
-
-    return timeMed/contMed;
-  }
-
   private calcDeviationTime(medium, total){
-    var data1:Date, data2:Date, deviation = 0;
+    var deviation = 0;
     this.clientsData.forEach(element => {
-      data1 = new Date(element["InfoEvents"]["firstEvent"]);
-      data2 = new Date(element["InfoEvents"]["lastEvent"]);
-      deviation += Math.pow((data2.getTime() - data1.getTime()) - (medium * 60 * 1000), 2);// faz a conta para balancear novamente os minutos, ja que timeMed esta em milisegundos
+      deviation += Math.pow(element["TotalTime"] - (medium ), 2);// faz a conta para balancear novamente os minutos, ja que timeMed esta em milisegundos
     }); 
 
     deviation /= total;
     deviation = Math.pow(deviation, 1/2);
-    deviation /= 1000;//Faz os ajustes para devolver em minutos
-    deviation /= 60;
 
     return deviation; 
-  }
-
-  private calcDeviationCoherence(medium, total){
-    var deviation = 0, test:boolean;
-    var events:any[];
-    var arr:any[];
-
-    events = [];
-
-    this.clientsData.forEach(element => {
-      deviation += Math.pow(element["CoherenceValue"]-medium, 2) ;
-    });
-
-    deviation /= total;
-    deviation = Math.pow(deviation, 1/2);
-
-    return deviation;
   }
 
   private calcDeviationEvents( medium, total){
@@ -389,7 +347,7 @@ export class DashboardFatecoins1Component implements OnChanges {
 
     this.clientsData.forEach(element => {
       test = false;
-      lengthEvents = element["InfoEvents"]["Events"].length;
+      lengthEvents = element["TotalEvents"];
       events.forEach(data => {
         if(data[0] == lengthEvents){
           data[1] ++;
@@ -421,7 +379,7 @@ export class DashboardFatecoins1Component implements OnChanges {
     var dateAna;
 
     str1 = (date+"").split(":");//isso para separar hora - minuto - segundo
-    dateAna = str1["0"]+":"+str1[1]+":00 GMT-0300";
+    dateAna = str1[0]+":"+str1[1]+":00 GMT-0300";
     date = new Date(dateAna);
     return date;
   }
