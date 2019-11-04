@@ -86,10 +86,10 @@ export class Dashboard3Component implements OnChanges {
     medCoherence /= totalAreas;
     medChoose /= totalAreas
 
-    this.cardAjust("Coerência", (100*medCoherence).toFixed(2)+"%", " Média por área", (this.calcDeviationCoherence(medCoherence, totalAreas)*100).toFixed(2)+"%", " Desvio Padrão", 1);
-    this.cardAjust("Eventos", (medEvents).toFixed(2), " Média por área", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " Desvio Padrão ",2);
-    this.cardAjust("Tempo", (medTime).toFixed(2) +" minutos", "Média por área", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Escolha", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), " Desvio Padrão", 4);
+    this.cardAjust("Coerência", (100*medCoherence).toFixed(2)+"%", " em Média por área", (this.calcDeviationCoherence(medCoherence, totalAreas)*100).toFixed(2)+"%", " de Desvio Padrão", 1);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), " em Média por área", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " de Desvio Padrão ",2);
+    this.cardAjust("Tempo Total na Área", (medTime).toFixed(2) +" minutos", " emMédia por área", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " de Desvio Padrão ", 3);
+    this.cardAjust("Escolha no Formulário", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), " de Desvio Padrão", 4);
     
   }
 

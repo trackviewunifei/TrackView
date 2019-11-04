@@ -242,6 +242,7 @@ export class TooltipService {
     return areas;
   }
 
+  //-------------------------------------------------Metodos relativos ao experimento da Fatec---------------------------------
   public convertClientsDataToPages(clientsData:any[]){
     var areaData:any[] = [], areas:any[] = [];
     var objArea:Object, objClient:Object, index;

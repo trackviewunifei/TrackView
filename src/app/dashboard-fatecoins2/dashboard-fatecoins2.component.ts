@@ -27,7 +27,7 @@ export class DashboardFatecoins2Component implements OnChanges {
   private axisNamesLine:string[];
   private axisNamesArea:string[];
   private axisNamesBullet:string[];
-  private bulletHeight = 170;
+  private bulletHeight = 180;
   private card1:string[];
   private card2:string[];
   private card3:string[];
@@ -81,9 +81,9 @@ export class DashboardFatecoins2Component implements OnChanges {
 
   private cardInsertData(){
     this.cardAjust("Usuários", this.group1Data.length+ "", " Usuários que não voltaram", this.group2Data.length + "", " Usuários que voltaram", 1);
-    this.cardAjust("Eventos", (this._tooltip.getAverageEventsPerClientFatec(this.group1Data)).toFixed(2), " Média de Eventos G1", (this._tooltip.getAverageEventsPerClientFatec(this.group2Data)).toFixed(2), " Média de Eventos G2",2);
-    this.cardAjust("Tempo", (this._tooltip.getAverageTimeFatec(this.group1Data)).toFixed(2)+" minutos", " Média de Tempo G1", (this._tooltip.getAverageTimeFatec(this.group2Data)).toFixed(2) +" minutos", " Média de Tempo G2 ", 3);
-    this.cardAjust("Conversão", (this._tooltip.getAverageConversion(this.group1Data)*100).toFixed(2)+"%", " Conversão G1", (this._tooltip.getAverageConversion(this.group2Data)*100).toFixed(2)+"%", " Conversão G2", 4);
+    this.cardAjust("Eventos", (this._tooltip.getAverageEventsPerClientFatec(this.group1Data)).toFixed(2), " de Média de Eventos G1", (this._tooltip.getAverageEventsPerClientFatec(this.group2Data)).toFixed(2), " de Média de Eventos G2",2);
+    this.cardAjust("Tempo Total", (this._tooltip.getAverageTimeFatec(this.group1Data)).toFixed(2)+" minutos", " de Média para G1", (this._tooltip.getAverageTimeFatec(this.group2Data)).toFixed(2) +" minutos", " de Média para G2 ", 3);
+    this.cardAjust("Conversão", (this._tooltip.getAverageConversion(this.group1Data)*100).toFixed(2)+"%", " de Conversão para G1", (this._tooltip.getAverageConversion(this.group2Data)*100).toFixed(2)+"%", " de Conversão para G2", 4);
     
   }
 

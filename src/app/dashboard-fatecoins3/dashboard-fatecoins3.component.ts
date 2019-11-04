@@ -71,26 +71,22 @@ export class DashboardFatecoins3Component implements OnChanges {
     var medEvents = 0;
     var medClients = 0;
     var medTime = 0; 
-    var medChoose = 0
+    var medPages = this.areasAccess(this.clientsData);
 
     this.areasData.forEach(element => {
       medEvents += element["Events"].length;
       medTime += (element["Time"])/element["Clients"].length;
       medClients += element["Clients"].length;
-      element["Clients"].forEach(data => {
-        medChoose += data["Choose"];
-      });
     });
     
     medEvents /= totalAreas;
-    medChoose /= totalAreas;
     medClients /= totalAreas;
 
-    this.cardAjust("Clientes", (medClients).toFixed(2), " Média por área", (this.calcDeviationClients(medClients, totalAreas)).toFixed(2), " Desvio Padrão", 1);
-    this.cardAjust("Eventos", (medEvents).toFixed(2), " Média por área", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " Desvio Padrão ",2);
-    this.cardAjust("Tempo", (medTime).toFixed(2) +" minutos", "Média por área", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Escolha", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationChoose(medChoose, totalAreas).toFixed(2), " Desvio Padrão", 4);
-    
+    this.cardAjust("Clientes", (medClients).toFixed(2), " de Média por Página", (this.calcDeviationClients(medClients, totalAreas)).toFixed(2), " de Desvio Padrão", 1);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), " de Média por Página", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " de Desvio Padrão ",2);
+    this.cardAjust("Tempo Total", (medTime).toFixed(2) +" minutos", " de Média por Página", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " de Desvio Padrão ", 3);
+    this.cardAjust("Páginas", (medPages).toFixed(2), " Páginas médias por usuários", this.calcDeviationPages(medPages, totalAreas).toFixed(2), " de Desvio Padrão", 4);
+    //media de paginas acessadas pro usuario
   }
 
   private cardAjust(cardName:string, cardValue:string, info:string, extraInfo:string, extraValue:string, cardOpt){
@@ -209,21 +205,18 @@ export class DashboardFatecoins3Component implements OnChanges {
     return deviation;
   }
 
-  private calcDeviationChoose(medium, total){
-    var deviation = 0, test:boolean, lengthChoose;
+  private calcDeviationPages(medium, total){
+    var deviation = 0, test:boolean, lengthEvents;
     var events:any[];
     var arr:any[];
 
     events = [];
 
-    this.areasData.forEach(element => {
+    this.clientsData.forEach(element => {
       test = false;
-      lengthChoose = 0;
-      element["Clients"].forEach(data => {
-        lengthChoose += data["Choose"];
-      });
+      lengthEvents = element["Pages"].length;
       events.forEach(data => {
-        if(data[0] == lengthChoose){
+        if(data[0] == lengthEvents){
           data[1] ++;
           test = true;
         }
@@ -231,7 +224,7 @@ export class DashboardFatecoins3Component implements OnChanges {
 
       if(!test){
         arr = [];
-        arr.push(lengthChoose);
+        arr.push(lengthEvents);
         arr.push(1);
         events.push(arr);
       }
@@ -281,6 +274,15 @@ export class DashboardFatecoins3Component implements OnChanges {
 
     return deviation;
 
+  }
+
+  private areasAccess(clientsData:any[]){
+    var areas = 0;
+    clientsData.forEach(element => {
+      areas += element["Pages"].length;
+    });
+    
+    return areas/clientsData.length;
   }
 
 }

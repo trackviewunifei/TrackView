@@ -67,7 +67,7 @@ export class DashboardFatecoins4Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-30' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
+    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-03' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
   }
 
   private cardsAjust(){
@@ -81,6 +81,7 @@ export class DashboardFatecoins4Component implements OnChanges {
     var totalAreas;
     totalAreas = this.areasData.length;
     var areaAccess = 0;
+    var totalClients = 0;
     var areaInterest = 0;
     var areaEvents = 0;
     var medInterest = 0;
@@ -102,13 +103,18 @@ export class DashboardFatecoins4Component implements OnChanges {
         });
         
       }
-
     });
-  
-    this.cardAjust("Usuários", areaInterest+"", " Usaram no caminho da compra", (medInterest/totalAreas).toFixed(2), " Média", 1);
+    
+    this.clientsData.forEach(element => {
+      if(element["Pages"].includes("Checkout")){
+        totalClients ++;
+      }
+    });
+
+    this.cardAjust("Caminho", areaInterest+"", " Usaram no caminho da compra", (areaInterest/totalClients*100).toFixed(2), "% que convergiram passaram", 1);
     this.cardAjust("Eventos", (areaEvents/areaAccess).toFixed(2)," Eventos por acesso",(medEvents/medAccess).toFixed(2), "Média Eventos por acesso",3);
-    this.cardAjust("Representatividade", ((areaInterest*100)/medInterest).toFixed(2)+"% do total", " Interesse", ((areaAccess*100)/medAccess).toFixed(2)+"% do total", " Acesso", 2);
-    this.cardAjust("Interesse", ((areaInterest*100)/areaAccess).toFixed(2)+"%", " Conversão", ((medInterest*100)/medAccess).toFixed(2) + "%", " Média", 4);
+    this.cardAjust("Representatividade", ((areaAccess*100)/this.clientsData.length).toFixed(2)+"% dos usuários acessaram", "", ((medAccess*100/totalAreas)/this.clientsData.length).toFixed(2)+"% de Média", " para as demais", 2);
+    this.cardAjust("Conversão", ((areaInterest*100)/areaAccess).toFixed(2)+"%", " de Média dessa Página", ((medInterest*100)/medAccess).toFixed(2) + "%", " de Média para as demais", 4);
     
   }
 
@@ -184,12 +190,14 @@ export class DashboardFatecoins4Component implements OnChanges {
     var arr:any[], cont = 0;
     this.pieChart = [];
     this.areasData.forEach(element => {
-      cont += element["Events"].length;
+      
       if(element["Name"] == this.choosenArea){
         arr = [];
         arr.push(this.choosenArea);
         arr.push(element["Events"].length);
         this.pieChart.push(arr);
+      }else{
+        cont += element["Events"].length;
       }
     });
 

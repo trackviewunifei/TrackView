@@ -59,7 +59,7 @@ export class DashboardFatecoins1Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-30' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
+    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-03' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
   }
 
   private cardsAjust(){
@@ -90,9 +90,9 @@ export class DashboardFatecoins1Component implements OnChanges {
     medEvents /= cardValue;
     medTime /= cardValue;
 
-    this.cardAjust("Usuários", (cardExtra), " usuários que compraram", (cardValue-cardExtra) + "", " usuários que não compraram ", 1);
-    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " Desvio Padrão ",2);
-    this.cardAjust("Tempo", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " Desvio Padrão ", 3);
+    this.cardAjust("Usuários", (cardExtra), " usuários que convergiram", (cardValue-cardExtra) + "", " usuários que não convergiram ", 1);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " de Desvio Padrão ",2);
+    this.cardAjust("Tempo Total", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " de Desvio Padrão ", 3);
     this.cardAjust("Conversão", (cardExtra/cardValue*100).toFixed(2)+"%", " dos usuários",  (numPages/cardExtra).toFixed(2), " Média de Páginas acessadas", 4);
     
   }

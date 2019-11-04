@@ -107,10 +107,10 @@ export class Dashboard6Component implements OnChanges {
 
     });
   
-    this.cardAjust("Usuários", areaInterest+"", " Escolheram", (medInterest/totalAreas).toFixed(2), " Média", 1);
-    this.cardAjust("Coerência", (areaCoherence*100).toFixed(2)+"%"," Coerência",((medCoherence/totalAreas)*100).toFixed(2)+"%", "Coerência Média",3);
-    this.cardAjust("Representatividade", ((areaInterest*100)/medInterest).toFixed(2)+"% do total", " Interesse", ((areaAccess*100)/medAccess).toFixed(2)+"% do total", " Acesso", 2);
-    this.cardAjust("Interesse", ((areaInterest*100)/areaAccess).toFixed(2)+"%", " Conversão", ((medInterest*100)/medAccess).toFixed(2) + "%", " Média", 4);
+    this.cardAjust("Usuários", areaInterest+"", " Escolheram esssa área", (medInterest/totalAreas).toFixed(2), " Média nas demais", 1);
+    this.cardAjust("Coerência", (areaCoherence*100).toFixed(2)+"%"," de Coerência nessa área",((medCoherence/totalAreas)*100).toFixed(2)+"%", " de Coerência Média",3);
+    this.cardAjust("Representatividade", ((areaInterest*100)/medInterest).toFixed(2)+"% do total", " das escolhas", ((areaAccess*100)/medAccess).toFixed(2)+"% do total", " dos Acessos", 2);
+    this.cardAjust("Interesse", ((areaInterest*100)/areaAccess).toFixed(2)+"%", " de Conversão nessa área", ((medInterest*100)/medAccess).toFixed(2) + "%", " de conversão Média", 4);
     
   }
 
@@ -184,12 +184,14 @@ export class Dashboard6Component implements OnChanges {
     var arr:any[], cont = 0;
     this.pieChart = [];
     this.areasData.forEach(element => {
-      cont += element["Events"].length;
+      
       if(element["Name"] == this.choosenArea){
         arr = [];
         arr.push(this.choosenArea);
         arr.push(element["Events"].length);
         this.pieChart.push(arr);
+      }else{
+        cont += element["Events"].length;
       }
     });
 

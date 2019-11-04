@@ -90,9 +90,9 @@ export class Dashboard4Component implements OnChanges {
     medTime = this.calcMedTime();
 
     this.cardAjust("Usuários", (cardExtra), " usuários com Coerência >= 60%", (cardValue-cardExtra) + "", " usuários com Menor que 60% ", 1);
-    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " Desvio Padrão ",2);
-    this.cardAjust("Tempo", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Coerência", (medCoherence*100).toFixed(2)+"%", " Média dos usuários", (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2) + "%", " Desvio Padrão", 4);
+    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " de Desvio Padrão ",2);
+    this.cardAjust("Tempo Total", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " de Desvio Padrão ", 3);
+    this.cardAjust("Coerência por usuário", (medCoherence*100).toFixed(2)+"%", " de Média", (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2) + "%", " de Desvio Padrão", 4);
     
   }
 
