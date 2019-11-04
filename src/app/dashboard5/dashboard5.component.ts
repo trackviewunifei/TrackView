@@ -13,7 +13,7 @@ export class Dashboard5Component implements OnChanges {
   private group1Data:any[] = [];
   private group2Data:any[] = [];
 
-  private queryGroup2:string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-14' and e.date_str >= '2019-10-13T00:25' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
+  private queryGroup2:string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-11-01' and e.date_str >= '2019-10-22' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
   private queryGroup1:string = "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados";
   //Variáveis que resultarão nos gráficos
   private radarChart:any[];
@@ -79,10 +79,10 @@ export class Dashboard5Component implements OnChanges {
   }
 
   private cardInsertData(){
-    this.cardAjust("Usuários", this.group1Data.length+ "", " Usuários G1", this.group2Data.length + "", " Usuários G2", 1);
-    this.cardAjust("Eventos", (this._tooltip.getAverageEventsPerClient(this.group1Data)).toFixed(2), " Média de Eventos G1", (this._tooltip.getAverageEventsPerClient(this.group2Data)).toFixed(2), " Média de Eventos G2",2);
-    this.cardAjust("Tempo", (this._tooltip.getAverageTime(this.group1Data)).toFixed(2)+" minutos", " Média de Tempo G1", (this._tooltip.getAverageTime(this.group2Data)).toFixed(2) +" minutos", " Média de Tempo G2 ", 3);
-    this.cardAjust("Coerência", (this._tooltip.getAverageCoherence(this.group1Data)*100).toFixed(2)+"%", " Coerência G1", (this._tooltip.getAverageCoherence(this.group2Data)*100).toFixed(2)+"%", " Coerência G2", 4);
+    this.cardAjust("Usuários", this.group1Data.length+ "", " Usuários COM22O", this.group2Data.length + "", " Usuários COM242", 1);
+    this.cardAjust("Eventos", (this._tooltip.getAverageEventsPerClient(this.group1Data)).toFixed(2), " Média de Eventos COM220", (this._tooltip.getAverageEventsPerClient(this.group2Data)).toFixed(2), " Média de Eventos COM242",2);
+    this.cardAjust("Tempo", (this._tooltip.getAverageTime(this.group1Data)).toFixed(2)+" minutos", " Média COM220", (this._tooltip.getAverageTime(this.group2Data)).toFixed(2) +" minutos", " Média COM242 ", 3);
+    this.cardAjust("Coerência", (this._tooltip.getAverageCoherence(this.group1Data)*100).toFixed(2)+"%", " Coerência COM220", (this._tooltip.getAverageCoherence(this.group2Data)*100).toFixed(2)+"%", " Coerência COM242", 4);
     
   }
 
@@ -128,8 +128,8 @@ export class Dashboard5Component implements OnChanges {
   private radarAjust(){
     this.radarChart = [];
 
-    this.radarChart.push(this.singleRadar(this.group1Data, "Grupo 1", this.colors[0]));
-    this.radarChart.push(this.singleRadar(this.group2Data, "Grupo 2", this.colors[1]));
+    this.radarChart.push(this.singleRadar(this.group1Data, "Grupo COM220", this.colors[0]));
+    this.radarChart.push(this.singleRadar(this.group2Data, "Grupo COM242", this.colors[1]));
   }
 
   private singleRadar(clientsDate:any[], pag :string, color: string){
@@ -195,8 +195,8 @@ export class Dashboard5Component implements OnChanges {
     var n, lineGroup1:any[], lineGroup2:any[], arr:any[];
     this.lineChart = [];
 
-    this.nomesLinhas.push("Grupo 1 (Menos_Experiente)");
-    this.nomesLinhas.push("Grupo 2 (Mais_Experiente)");
+    this.nomesLinhas.push("Grupo COM220");
+    this.nomesLinhas.push("Grupo COM242");
     this.nomesLinhas.push("Média");
     
     lineGroup1 = this.singleLine(this.group1Data, this.startTimeG1, this.endTimeG1);
@@ -259,8 +259,8 @@ export class Dashboard5Component implements OnChanges {
     }
     
     this.areasNames = [];
-    this.areasNames.push("Grupo 1 (Menos experiente)");
-    this.areasNames.push("Grupo 2 (Mais experiente)");
+    this.areasNames.push("Grupo COM220");
+    this.areasNames.push("Grupo 242");
 
   }
 
@@ -339,16 +339,15 @@ export class Dashboard5Component implements OnChanges {
     timeG2 /= 1000;
     timeG2 /= 60;
 
-    med = timeG1/contG1;
-    med += timeG2/contG2;
-    med /= 2;
+    med = timeG1 + timeG2;
+    med /= contG1 + contG2;
 
-    obj.push("Grupo 1");
+    obj.push("Grupo COM220");
     obj.push(timeG1/contG1);
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Grupo 2");
+    obj.push("Grupo COM242");
     obj.push(timeG2/contG2);
     this.bulletChart.push(obj);
 

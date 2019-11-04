@@ -88,7 +88,7 @@ export class DadosService {
   private async leituraEventos(){
     this.clientsData = new Array();
     var obj, i = 0;
-    await d3.csv("../../assets/forms.csv").then((data)=> {//Le o csv
+    await d3.csv("../../assets/form.csv").then((data)=> {//Le o csv
       data.forEach(element => {//para cada elemento vindo do csv ira
         //replace(/[\\"]/g, ''); possivel necessidade disso depois
         var array = this.separaEventosArea(element.Name);
@@ -351,7 +351,7 @@ export class DadosService {
       return "Login";
     else if(pag.includes("checkout"))
       return "Checkout";
-    else if(pag.includes("Oferta"))
+    else if(pag.includes("oferta"))
       return "Oferta";
     else
       return "Demais";

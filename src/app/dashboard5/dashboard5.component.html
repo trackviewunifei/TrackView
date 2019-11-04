@@ -1,7 +1,14 @@
 
   <div class="row" style="max-width: 88rem;">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-      <h1 class="text-info text-center">Comparação dos Grupos</h1>
+    <div class="col-sm-6 col-md-6 col-lg-6">
+      <h1 class="text-info text-center">Comparação COM220 e COM242</h1>
+    </div>
+    <div class="col-sm-6 col-md-6 col-lg-6">
+      <div class="btn-group">
+        <button type="button" clicked="true" class="btn text-info border-info bg-dark">Hoje</button>
+        <button type="button" class="btn text-info border-info bg-dark">Este Mês</button>
+        <button type="button" class="btn text-info border-info bg-dark">Este Ano</button>
+      </div>
     </div>
     <div class="col-sm-6 col-md-3 col-lg-3">
       <app-card [strings]="card1"></app-card>
@@ -43,7 +50,7 @@
           <div class="card text-white border-info bg-dark mb-3">
             <app-radar-chart [data]="radarChart" [colors]="colors"></app-radar-chart>
             <div class="card-body">
-              <h5 class="card-title text-center">Comparativo Grupo 1 e 2</h5>
+              <h5 class="card-title text-center">Comparativo Grupo entre COM220 e COM242</h5>
             </div>
           </div>
         </div>

@@ -62,6 +62,39 @@ export class TooltipService {
     return timeMed/contMed;
   }
 
+  //--------------------start methods fatec----------------------
+
+  public getAverageConversion(clientsData:any[]){
+    var coherence = 0;
+    clientsData.forEach(element => {
+      if(element["Pages"].includes("Checkout"))
+        coherence ++;
+    });
+
+    return coherence/clientsData.length;
+  }
+
+  public getAverageTimeFatec(clientsData:any[]){
+    var timeMed = 0;
+
+    clientsData.forEach(element => {
+      timeMed += element["TotalTime"]; 
+    }); 
+    
+    return timeMed/clientsData.length;
+  }
+
+  public getAverageEventsPerClientFatec(clientsData:any[]){
+    var events = 0;
+    clientsData.forEach(element =>{
+      events += element["TotalEvents"];
+    });
+
+    return events/clientsData.length;
+  }
+
+  //---------------------------end-------------------------------
+
   public setStartEndDate(startTime:Date, endTime:Date, clientsData:any[]){
     var firstEvent = 0, lastEvent = 0; 
     var data1, data2;
@@ -92,7 +125,7 @@ export class TooltipService {
     var dateAna;
 
     str1 = (date+"").split(":");//isso para separar hora - minuto - segundo
-    dateAna = str1["0"]+":"+str1[1]+":00 GMT-0300";
+    dateAna = str1[0]+":"+str1[1]+":00 GMT-0300";
     date = new Date(dateAna);
     return date;
   }
@@ -207,6 +240,132 @@ export class TooltipService {
     });
 
     return areas;
+  }
+
+  public convertClientsDataToPages(clientsData:any[]){
+    var areaData:any[] = [], areas:any[] = [];
+    var objArea:Object, objClient:Object, index;
+    var verify;
+
+    clientsData.forEach(element => {
+      element["Events"].forEach(event => {
+        element["Pages"].forEach(page => {
+          if(page != "Checkout") // não é desejado que a página de checkout apareça nas áreas com eventos visto que ela é o objetivo final
+            if(areas.includes(page)){
+              index = areas.indexOf(page);
+              
+              areaData[index]["Time"] += this.separaEventosPage(event["EventsData"], this.convert_page_name(page));
+              verify = 0;
+              
+              areaData[index]["Clients"].forEach(client => {
+                if(client["ClientName"] == element["Name"])
+                  verify = 1
+              });
+    
+              if(verify == 0){
+    
+                objClient = new Object();
+                objClient["ClientName"] = element["Name"];
+            
+                objClient["Choose"] = 0;
+                if(element["Pages"].includes("Checkout"))
+                  objClient["Choose"] = 1;
+            
+                objClient["QtdEvents"] = element["TotalEvents"];
+                areaData[index]["Clients"].push(objClient);
+              }
+            }else{
+              areas.push(page);
+              
+              objArea = new Object();
+              objArea["Name"] = page;
+              objArea["Time"] = this.separaEventosPage(event["EventsData"], this.convert_page_name(page));
+              objArea["Events"] = [];
+              objArea["Clients"] = [];
+    
+              objClient = new Object();
+              objClient["ClientName"] = element["Name"];
+    
+              objClient["Choose"] = 0;
+              if(element["Pages"].includes("Checkout"))
+                objClient["Choose"] = 1;
+            
+              objClient["QtdEvents"] = element["TotalEvents"];
+    
+              objArea["Clients"].push(objClient);
+              areaData.push(objArea);
+            }
+        });
+      });
+    });
+
+    this.calcEventsAreaFatec(areaData, clientsData);
+    console.log(areaData);
+    return areaData;
+  }
+
+  private calcEventsAreaFatec(areaData:any[], clientsData:any[]){
+    var namePage;
+    clientsData.forEach(element => {
+      element["Events"].forEach(data => {
+        data["EventsData"].forEach(event => {
+          namePage = this.convert_page(event[1]);
+          areaData.forEach(area => {
+            if(area["Name"] == namePage)
+              area["Events"].push(event[0]);
+          });          
+        });
+      });
+    });
+  }
+
+  private convert_page_name(pag:string){
+    if(pag.includes("Cart"))
+      return "cart";
+    else if(pag.includes("Login"))
+      return "login";
+    else if(pag.includes("Checkout"))
+      return "checkout";
+    else if(pag.includes("Oferta"))
+      return "oferta";
+    else
+      return "Demais";
+  }
+
+  private convert_page(pag:string){
+    if(pag.includes("cart"))
+      return "Cart";
+    else if(pag.includes("login"))
+      return "Login";
+    else if(pag.includes("checkout"))
+      return "Checkout";
+    else if(pag.includes("oferta"))
+      return "Oferta";
+    else
+      return "Demais";
+  }
+
+  private separaEventosPage(events:any[], pageName: string){
+    var i = 0, tamanhoEventos = events.length, time = 0;
+    var inicio = "", fim = "";
+    var data1, data2;
+
+    for(i = 0; i < tamanhoEventos; i++){
+      if(inicio == "" && i+1 < tamanhoEventos && events[i][1].includes(pageName))
+        inicio = events[i][0];
+      
+      if(inicio != "" && events[i][1].includes(pageName)){
+        if(i+1 > tamanhoEventos || (i+1 < tamanhoEventos && !events[i+1][1].includes(pageName))){
+          fim = events[i][0];
+          data1 = new Date(inicio);
+          data2 = new Date(fim);
+          time += data2.getTime() - data1.getTime();
+          inicio = ""; 
+        }
+      }
+    }
+    
+    return (time/60)/1000;
   }
 
 }

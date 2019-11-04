@@ -43,7 +43,7 @@ export class DashboardFatecoins3Component implements OnChanges {
   private async obDados(){
     await this.obtemDados();
     this._dados.closeConnection();
-    this.areasData = this._tooltip.convertClientsDataToArea(this.clientsData);
+    this.areasData = this._tooltip.convertClientsDataToPages(this.clientsData);
 
     this.donutAjust();
     this.pieAjust();
@@ -54,7 +54,7 @@ export class DashboardFatecoins3Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
+    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-30' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
   }
 
   private cardsAjust(){
@@ -69,27 +69,27 @@ export class DashboardFatecoins3Component implements OnChanges {
     totalAreas = this.areasData.length;
     
     var medEvents = 0;
-    var medCoherence = 0;
+    var medClients = 0;
     var medTime = 0; 
     var medChoose = 0
 
     this.areasData.forEach(element => {
-      medCoherence += element["Coherence"];
       medEvents += element["Events"].length;
       medTime += (element["Time"])/element["Clients"].length;
+      medClients += element["Clients"].length;
       element["Clients"].forEach(data => {
         medChoose += data["Choose"];
       });
     });
     
     medEvents /= totalAreas;
-    medCoherence /= totalAreas;
-    medChoose /= totalAreas
+    medChoose /= totalAreas;
+    medClients /= totalAreas;
 
-    this.cardAjust("Coerência", (100*medCoherence).toFixed(2)+"%", " Média por área", (this.calcDeviationCoherence(medCoherence, totalAreas)*100).toFixed(2)+"%", " Desvio Padrão", 1);
+    this.cardAjust("Clientes", (medClients).toFixed(2), " Média por área", (this.calcDeviationClients(medClients, totalAreas)).toFixed(2), " Desvio Padrão", 1);
     this.cardAjust("Eventos", (medEvents).toFixed(2), " Média por área", this.calcDeviationEvents(medEvents, totalAreas).toFixed(2), " Desvio Padrão ",2);
     this.cardAjust("Tempo", (medTime).toFixed(2) +" minutos", "Média por área", this.calcDeviationTime(medTime, totalAreas).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Escolha", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationCoherence(medCoherence, totalAreas).toFixed(2), " Desvio Padrão", 4);
+    this.cardAjust("Escolha", (medChoose).toFixed(2), " escolhas em Média", this.calcDeviationChoose(medChoose, totalAreas).toFixed(2), " Desvio Padrão", 4);
     
   }
 
@@ -116,10 +116,10 @@ export class DashboardFatecoins3Component implements OnChanges {
     this.axisNamesBullet = [];
     this.axisNamesBar = [];
 
-    this.axisNamesBullet.push("Coerência");
-    this.axisNamesBullet.push("Áreas");
+    this.axisNamesBullet.push("Clientes");
+    this.axisNamesBullet.push("Páginas");
     
-    this.axisNamesBar.push("Áreas");
+    this.axisNamesBar.push("Páginas");
     this.axisNamesBar.push("Tempo Médio por Cliente");
     
     this.colors = [];
@@ -138,7 +138,7 @@ export class DashboardFatecoins3Component implements OnChanges {
     this.areasData.forEach(element => {
       arr = [];
       arr.push(element["Name"]);
-      arr.push(element["Coherence"]);
+      arr.push(element["Clients"].length);
       this.bulletChart.push(arr);
     });
 
@@ -153,7 +153,7 @@ export class DashboardFatecoins3Component implements OnChanges {
       element["Clients"].forEach(data => {
         cont += data["Choose"];
       });
-
+      
       arr.push(element["Name"]);
       arr.push(cont);
       this.pieChart.push(arr);
@@ -196,11 +196,11 @@ export class DashboardFatecoins3Component implements OnChanges {
     return deviation; 
   }
 
-  private calcDeviationCoherence(medium, total){
+  private calcDeviationClients(medium, total){
     var deviation = 0;
 
     this.areasData.forEach(element => {
-      deviation += Math.pow(element["Coherence"]-medium, 2) ;
+      deviation += Math.pow(element["Clients"].length-medium, 2) ;
     });
 
     deviation /= total;

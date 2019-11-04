@@ -159,10 +159,12 @@ export class Dashboard6Component implements OnChanges {
   private bulletAjust(){
     var arr;
     var cont = 0;
+    var clients = 0;
     this.bulletChart = [];
 
     this.areasData.forEach(element => {
-      cont += element["Time"]/element["Clients"].length;
+      cont += element["Time"];
+      clients += element["Clients"].length;
       if(element["Name"] == this.choosenArea){  
         arr = [];
         arr.push(element["Name"]);
@@ -173,7 +175,7 @@ export class Dashboard6Component implements OnChanges {
 
     arr = [];
     arr.push("Média das demais áreas");    
-    arr.push(cont/this.areasData.length);
+    arr.push(cont/clients);
     this.bulletChart.push(arr);
   }
 

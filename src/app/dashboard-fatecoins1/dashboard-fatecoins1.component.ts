@@ -93,7 +93,7 @@ export class DashboardFatecoins1Component implements OnChanges {
     this.cardAjust("Usuários", (cardExtra), " usuários que compraram", (cardValue-cardExtra) + "", " usuários que não compraram ", 1);
     this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " Desvio Padrão ",2);
     this.cardAjust("Tempo", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " Desvio Padrão ", 3);
-    this.cardAjust("Coerência", (cardExtra/cardValue*100).toFixed(2)+"%", " dos usuários",  (numPages/cardExtra).toFixed(2), " Média de Páginas acessadas", 4);
+    this.cardAjust("Conversão", (cardExtra/cardValue*100).toFixed(2)+"%", " dos usuários",  (numPages/cardExtra).toFixed(2), " Média de Páginas acessadas", 4);
     
   }
 

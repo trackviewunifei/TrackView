@@ -41,7 +41,7 @@ export class DashboardFatecoins4Component implements OnChanges {
   private endTime;
 
   constructor(private _dados: DadosService, private _tooltip: TooltipService) { 
-    this.choosenArea = "Gaming";
+    this.choosenArea = "Cart";
     this.cardsAjust();
     this.obDados();
   }
@@ -55,20 +55,19 @@ export class DashboardFatecoins4Component implements OnChanges {
   private async obDados(){
     await this.obtemDados();
     this._dados.closeConnection();
-    this.areasData = this._tooltip.convertClientsDataToArea(this.clientsData);
+    this.areasData = this._tooltip.convertClientsDataToPages(this.clientsData);
 
     this.setStartEndDate();
-    this.areasTitle = this._tooltip.getAreas(this.areasData);
+    this.fillAxis();
     this.areaAjust();
     this.pieAjust();
     this.bulletAjust();
     this.lineAjust();
     this.cardInsertData();
-    this.fillAxis();
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
+    this.clientsData = await this._dados.getEventsFatec("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-30' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados");
   }
 
   private cardsAjust(){
@@ -82,32 +81,32 @@ export class DashboardFatecoins4Component implements OnChanges {
     var totalAreas;
     totalAreas = this.areasData.length;
     var areaAccess = 0;
-    var areaCoherence = 0;
     var areaInterest = 0;
-
-    var medCoherence = 0;
+    var areaEvents = 0;
     var medInterest = 0;
     var medAccess = 0;
-    
+    var medEvents = 0;
+
     this.areasData.forEach(element => {
-      medCoherence += element["Coherence"];
       medAccess += element['Clients'].length;
+      medEvents += element['Events'].length;
       element['Clients'].forEach(data => {
         medInterest += data['Choose']
       });
 
       if(element['Name'] == this.choosenArea){
-        areaCoherence = element['Coherence'];
         areaAccess = element['Clients'].length;
+        areaEvents = element['Events'].length;
         element['Clients'].forEach(data => {
           areaInterest += data['Choose'];
         });
+        
       }
 
     });
   
-    this.cardAjust("Usuários", areaInterest+"", " Escolheram", (medInterest/totalAreas).toFixed(2), " Média", 1);
-    this.cardAjust("Coerência", (areaCoherence*100).toFixed(2)+"%"," Coerência",((medCoherence/totalAreas)*100).toFixed(2)+"%", "Coerência Média",3);
+    this.cardAjust("Usuários", areaInterest+"", " Usaram no caminho da compra", (medInterest/totalAreas).toFixed(2), " Média", 1);
+    this.cardAjust("Eventos", (areaEvents/areaAccess).toFixed(2)," Eventos por acesso",(medEvents/medAccess).toFixed(2), "Média Eventos por acesso",3);
     this.cardAjust("Representatividade", ((areaInterest*100)/medInterest).toFixed(2)+"% do total", " Interesse", ((areaAccess*100)/medAccess).toFixed(2)+"% do total", " Acesso", 2);
     this.cardAjust("Interesse", ((areaInterest*100)/areaAccess).toFixed(2)+"%", " Conversão", ((medInterest*100)/medAccess).toFixed(2) + "%", " Média", 4);
     
@@ -136,7 +135,7 @@ export class DashboardFatecoins4Component implements OnChanges {
     this.axisNamesArea = [];
     this.axisNamesBullet = [];
     this.axisNamesLine = [];
-
+    this.nomesLinhas = [];
     this.axisNamesArea.push("Tempo");
     this.axisNamesArea.push("Média de eventos por usuários");
 
@@ -145,6 +144,8 @@ export class DashboardFatecoins4Component implements OnChanges {
     
     this.axisNamesLine.push("Tempo");
     this.axisNamesLine.push("Eventos");
+
+    this.areasTitle = this._tooltip.getAreas(this.areasData);
     
     this.colors = [];
     this.colors.push("#F1C40F");
@@ -158,10 +159,12 @@ export class DashboardFatecoins4Component implements OnChanges {
   private bulletAjust(){
     var arr;
     var cont = 0;
+    var clients = 0;
     this.bulletChart = [];
 
     this.areasData.forEach(element => {
-      cont += element["Time"]/element["Clients"].length;
+      cont += element["Time"];
+      clients += element["Clients"].length;
       if(element["Name"] == this.choosenArea){  
         arr = [];
         arr.push(element["Name"]);
@@ -171,8 +174,8 @@ export class DashboardFatecoins4Component implements OnChanges {
     });
 
     arr = [];
-    arr.push("Média das demais áreas");    
-    arr.push(cont/this.areasData.length);
+    arr.push("Média das demais páginas");    
+    arr.push(cont/clients);
     this.bulletChart.push(arr);
   }
 
@@ -191,23 +194,25 @@ export class DashboardFatecoins4Component implements OnChanges {
     });
 
     arr = [];
-    arr.push("Demais áreas");
+    arr.push("Demais Páginas");
     arr.push(cont);
     this.pieChart.push(arr);
   }
 
   private areaAjust(){
     var arr:any[], areas:any[], dateAux:Date, stateArray:any [];
+    var date, month;
     this.areaChart = [], i;
     
     stateArray = [];
     areas = [];
     
-    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 86400000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);
       stateArray.push(0);
       arr = [];//pre aloca o vetor que conterá os dados
-      arr.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      month = dateAux.getMonth()+1;
+      arr.push(dateAux.getDate()+"/"+month);
       arr.push(0);
       arr.push(0);
       arr.push(0);
@@ -219,7 +224,8 @@ export class DashboardFatecoins4Component implements OnChanges {
       element["Events"].forEach(event => {
         i = 0;
         areas.forEach(data => {
-          if(event.includes(data[0])){
+          date = data[0].split("/");
+          if(event.includes(date[1] + "-" + date[0])){
             if(element["Name"] == this.choosenArea)
               data[1] += 1;
             
@@ -254,7 +260,7 @@ export class DashboardFatecoins4Component implements OnChanges {
 
     this.areasNames = [];
     this.areasNames.push(this.choosenArea);
-    this.areasNames.push("Demais Áreas");
+    this.areasNames.push("Demais Páginas");
 
     this.areaChart = areas;
   }
@@ -262,16 +268,18 @@ export class DashboardFatecoins4Component implements OnChanges {
   private lineAjust(){
     var obj;
     var dateAux;
+    var date, month;
     this.lineChart = [];
 
     this.nomesLinhas.push(this.choosenArea);
     this.nomesLinhas.push("Demais");
     this.nomesLinhas.push("Média");
     
-    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
+    for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 86400000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);
       obj = [];//pre aloca o vetor que conterá os dados
-      obj.push(dateAux.getHours()+":"+dateAux.getMinutes());
+      month = dateAux.getMonth()+1;
+      obj.push(dateAux.getDate()+"/"+month);
       obj.push(0);
       obj.push(0);
       obj.push(0);
@@ -281,7 +289,8 @@ export class DashboardFatecoins4Component implements OnChanges {
     this.areasData.forEach(element => {// para cada cliente irá percorrer seus eventos e lançar a qual posição eles pertencem
       element["Events"].forEach(event => {
         this.lineChart.forEach(data => {
-          if(event.includes(data[0])){
+          date = data[0].split("/");
+          if(event.includes(date[1] + "-" + date[0])){
             if(element["Name"] == this.choosenArea)
               data[1] += 1;
            
@@ -331,7 +340,7 @@ export class DashboardFatecoins4Component implements OnChanges {
     var dateAna;
 
     str1 = (date+"").split(":");//isso para separar hora - minuto - segundo
-    dateAna = str1["0"]+":"+str1[1]+":00 GMT-0300";
+    dateAna = str1[0]+":"+str1[1]+":00 GMT-0300";
     date = new Date(dateAna);
     return date;
   }

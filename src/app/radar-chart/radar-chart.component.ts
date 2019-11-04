@@ -80,7 +80,7 @@ export class RadarChartComponent implements OnChanges {
       roundStrokes: false,
       color: d3.scaleOrdinal().range([this.colors[0], this.colors[1], this.colors[2]]),
       format: '.0f',
-      legend: { title: 'Grupos', translateX: 100, translateY: 40 },
+      legend: { title: 'Grupos', translateX: 70, translateY: 20 },
       unit: ''
     };
     // Draw the chart, get a reference the created svg element :
@@ -156,7 +156,7 @@ export class RadarChartComponent implements OnChanges {
         }
       }
     }
-    maxValue = this.max(cfg.maxValue, maxValue);
+    //maxValue = this.max(cfg.maxValue, maxValue);
 
     const allAxis = data[0].axes.map((i, j) => i.axis),	//Names of each axis
       total = allAxis.length,					//The number of different axes
