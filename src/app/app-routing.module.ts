@@ -1,23 +1,23 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { Dashboard4Component } from './dashboard4/dashboard4.component';
-import { Dashboard5Component } from './dashboard5/dashboard5.component';
-import { Dashboard3Component } from './dashboard3/dashboard3.component';
-import { Dashboard6Component } from './dashboard6/dashboard6.component';
-import { DashboardFatecoins1Component} from './dashboard-fatecoins1/dashboard-fatecoins1.component';
-import { DashboardFatecoins2Component} from './dashboard-fatecoins2/dashboard-fatecoins2.component';
-import { DashboardFatecoins3Component} from './dashboard-fatecoins3/dashboard-fatecoins3.component';
-import { DashboardFatecoins4Component} from './dashboard-fatecoins4/dashboard-fatecoins4.component';
+import { DashSinglePageGeneralComponent } from './dash-single-page-general/dash-single-page-general.component';
+import { DashSinglePageComparativeComponent } from './dash-single-page-comparative/dash-single-page-comparative.component';
+import { DashSinglePageFocalPointComponent } from './dash-single-page-focal-point/dash-single-page-focal-point.component';
+import { DashSinglePageDetailsComponent } from './dash-single-page-details/dash-single-page-details.component';
+import { DashGeneralComponent} from './dash-general/dash-general.component';
+import { DashComparativeComponent} from './dash-comparative/dash-comparative.component';
+import { DashFocalPointComponent} from './dash-focal-point/dash-focal-point.component';
+import { DashDetailsComponent} from './dash-details/dash-details.component';
 
 const routes: Routes = [
-  {path:'dashboard1', component:Dashboard4Component},
-  {path:'dashboard2', component:Dashboard5Component},
-  {path:'dashboard3', component:Dashboard3Component},
-  {path:'dashboard4', component:Dashboard6Component},
-  {path:'dash-fate1', component:DashboardFatecoins1Component},
-  {path:'dash-fate2', component:DashboardFatecoins2Component},
-  {path:'dash-fate3', component:DashboardFatecoins3Component},
-  {path:'dash-fate4', component:DashboardFatecoins4Component}
+  {path:'dashboard1', component:DashSinglePageGeneralComponent},
+  {path:'dashboard2', component:DashSinglePageComparativeComponent},
+  {path:'dashboard3', component:DashSinglePageFocalPointComponent},
+  {path:'dashboard4', component:DashSinglePageDetailsComponent},
+  {path:'dashboard5', component:DashGeneralComponent},
+  {path:'dashboard6', component:DashComparativeComponent},
+  {path:'dashboard7', component:DashFocalPointComponent},
+  {path:'dashboard8', component:DashDetailsComponent}
 ];
 
 @NgModule({
@@ -25,5 +25,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponents = [Dashboard3Component, Dashboard4Component, Dashboard5Component, Dashboard6Component, 
-  DashboardFatecoins1Component, DashboardFatecoins2Component, DashboardFatecoins3Component, DashboardFatecoins4Component]
+export const routingComponents = [DashSinglePageGeneralComponent, DashSinglePageComparativeComponent, DashSinglePageFocalPointComponent, DashSinglePageDetailsComponent, 
+  DashGeneralComponent, DashComparativeComponent, DashFocalPointComponent, DashDetailsComponent]

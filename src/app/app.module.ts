@@ -33,6 +33,21 @@ import { DashboardFatecoins1Component } from './dashboard-fatecoins1/dashboard-f
 import { DashboardFatecoins2Component } from './dashboard-fatecoins2/dashboard-fatecoins2.component';
 import { DashboardFatecoins3Component } from './dashboard-fatecoins3/dashboard-fatecoins3.component';
 import { DashboardFatecoins4Component } from './dashboard-fatecoins4/dashboard-fatecoins4.component';
+import { DashSinglePageGeneralComponent } from './dash-single-page-general/dash-single-page-general.component';
+import { DashSinglePageComparativeComponent } from './dash-single-page-comparative/dash-single-page-comparative.component';
+import { DashSinglePageFocalPointComponent } from './dash-single-page-focal-point/dash-single-page-focal-point.component';
+import { DashSinglePageDetailsComponent } from './dash-single-page-details/dash-single-page-details.component';
+import { DashDetailsComponent } from './dash-details/dash-details.component';
+import { DashFocalPointComponent } from './dash-focal-point/dash-focal-point.component';
+import { DashComparativeComponent } from './dash-comparative/dash-comparative.component';
+import { DashGeneralComponent } from './dash-general/dash-general.component';
+import { ChartBarComponent } from './chart-bar/chart-bar.component';
+import { ChartBulletComponent } from './chart-bullet/chart-bullet.component';
+import { ChartPieComponent } from './chart-pie/chart-pie.component';
+import { ChartDonutComponent } from './chart-donut/chart-donut.component';
+import { ChartRadarComponent } from './chart-radar/chart-radar.component';
+import { ChartLineComponent } from './chart-line/chart-line.component';
+import { ChartAreaComponent } from './chart-area/chart-area.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +69,22 @@ import { DashboardFatecoins4Component } from './dashboard-fatecoins4/dashboard-f
     DashboardFatecoins1Component,
     DashboardFatecoins2Component,
     DashboardFatecoins3Component,
-    DashboardFatecoins4Component
+    DashboardFatecoins4Component,
+    DashSinglePageGeneralComponent,
+    DashSinglePageComparativeComponent,
+    DashSinglePageFocalPointComponent,
+    DashSinglePageDetailsComponent,
+    DashDetailsComponent,
+    DashFocalPointComponent,
+    DashComparativeComponent,
+    DashGeneralComponent,
+    ChartBarComponent,
+    ChartBulletComponent,
+    ChartPieComponent,
+    ChartDonutComponent,
+    ChartRadarComponent,
+    ChartLineComponent,
+    ChartAreaComponent
   ],
   imports: [
     BrowserModule,

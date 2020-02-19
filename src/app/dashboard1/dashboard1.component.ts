@@ -41,10 +41,6 @@ export class Dashboard1Component implements OnInit {
   }
 
   private async obtemDados(){
-      this.grafDonut = await this._dados.getDados(this.consultaDonut);
-      this.grafBar = await this._dados.getDados(this.consultaBar);
-      this.area1 = await this._dados.getDados(this.consultaArea1);
-      this.area2 = await this._dados.getDados(this.consultaArea2);
       this.uneArrayArea();
       /*
       this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");

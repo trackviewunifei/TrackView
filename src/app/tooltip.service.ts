@@ -26,7 +26,7 @@ export class TooltipService {
     return events/clientsData.length;
   }
 
-  public getAverageTimeOnArea(clientsData: any[]){//TODO: make a method do capture the time in a modal
+  public getAverageTimeOnArea(clientsData: any[]){
     var contMed = 0;
     var timeMed = 0;
     var data1, data2;
@@ -242,7 +242,6 @@ export class TooltipService {
     return areas;
   }
 
-  //-------------------------------------------------Metodos relativos ao experimento da Fatec---------------------------------
   public convertClientsDataToPages(clientsData:any[]){
     var areaData:any[] = [], areas:any[] = [];
     var objArea:Object, objClient:Object, index;
@@ -255,7 +254,7 @@ export class TooltipService {
             if(areas.includes(page)){
               index = areas.indexOf(page);
               
-              areaData[index]["Time"] += this.separaEventosPage(event["EventsData"], this.convert_page_name(page));
+              areaData[index]["Time"] += this.separateEventsPage(event["EventsData"], this.convert_page_name(page));
               verify = 0;
               
               areaData[index]["Clients"].forEach(client => {
@@ -280,7 +279,7 @@ export class TooltipService {
               
               objArea = new Object();
               objArea["Name"] = page;
-              objArea["Time"] = this.separaEventosPage(event["EventsData"], this.convert_page_name(page));
+              objArea["Time"] = this.separateEventsPage(event["EventsData"], this.convert_page_name(page));
               objArea["Events"] = [];
               objArea["Clients"] = [];
     
@@ -346,22 +345,22 @@ export class TooltipService {
       return "Demais";
   }
 
-  private separaEventosPage(events:any[], pageName: string){
-    var i = 0, tamanhoEventos = events.length, time = 0;
-    var inicio = "", fim = "";
+  private separateEventsPage(events:any[], pageName: string){
+    var i = 0, eventsLength = events.length, time = 0;
+    var start = "", end = "";
     var data1, data2;
 
-    for(i = 0; i < tamanhoEventos; i++){
-      if(inicio == "" && i+1 < tamanhoEventos && events[i][1].includes(pageName))
-        inicio = events[i][0];
+    for(i = 0; i < eventsLength; i++){
+      if(start == "" && i+1 < eventsLength && events[i][1].includes(pageName))
+      start = events[i][0];
       
-      if(inicio != "" && events[i][1].includes(pageName)){
-        if(i+1 > tamanhoEventos || (i+1 < tamanhoEventos && !events[i+1][1].includes(pageName))){
-          fim = events[i][0];
-          data1 = new Date(inicio);
-          data2 = new Date(fim);
+      if(start != "" && events[i][1].includes(pageName)){
+        if(i+1 > eventsLength || (i+1 < eventsLength && !events[i+1][1].includes(pageName))){
+          end = events[i][0];
+          data1 = new Date(start);
+          data2 = new Date(end);
           time += data2.getTime() - data1.getTime();
-          inicio = ""; 
+          start = ""; 
         }
       }
     }

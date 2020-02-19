@@ -53,22 +53,12 @@ export class Dashboard2Component implements OnChanges {
     this.ajustaCard("Páginas", "31 Acessos", " teste3",3);
     this.ajustaCard("Users", "32 Acessos", " teste4",4);
 
-    this.grafPizza = await this._dados.getDados(consulta);
-    this.grafBar = await this._dados.getDados(consulta);
-    this.linha = await this._dados.getDados("match (e:Event)-[a:AT]->(u:UserAgent) where e.date_str <= '2019-09-15' and e.date_str >= '2019-01-01' return left(e.date_str, 10) as data, u.id as navegador, count(distinct e) as eventos order by data");
     this.ajustaArrayLinha();
-    this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
-    this.cons2 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-    this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-    this.cons4 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
-    this.dados = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return e.client_id, e.date_str as data order by data");
     this.radar = [];
     this.uneRadar("Pagina", '#26AF32');
 
-    this.cons3 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct e) as eventos order by eventos desc");
     this.uneRadar("Pagina 2", '#762712');
 
-    this.cons1 = await this._dados.getDados("match (e:Event)-[i:IN]->(p:Page) match (e:Event)<-[t:TRIGGERED]-(u:User) match (e:Event)-[o:ON]->(l:Element) where e.date_str <= '2019-09-27' and e.date_str >= '2019-01-01' and p.id = 'guilheeeeeeerme.github.io/footstep' return p.id as pagina, count(distinct u.client_id) as qtdUsuarios");
     this.uneRadar("Pagina 3", '#2a2fd4');
     this.grafRadar = this.radar;
     console.log(this.grafRadar);

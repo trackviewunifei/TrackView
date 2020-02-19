@@ -1,7 +1,7 @@
 
 <div class="row" style="max-width: 88rem;">
   <div class="col-sm-6 col-md-6 col-lg-6">
-    <h1 class="text-info text-center">Clientes</h1>
+    <h1 class="text-info text-center">{{configs.Title}}</h1>
   </div>
   <div class="col-sm-6 col-md-6 col-lg-6">
     <div class="btn-group">
@@ -28,7 +28,7 @@
     <div class="card text-white border-info bg-dark mb-3">
       <app-bubble-chart [data]="areaChart" [axisNames]="axisNamesArea" [colors]="colors" [areasName]="areasNames"></app-bubble-chart>
       <div class="card-body">
-        <h5 class="card-title text-center">Distribuição das Médias de Eventos ao longo do tempo</h5>
+        <h5 class="card-title text-center">{{configs.Charts[0].Title}}</h5>
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@
     <div class="card text-white border-info bg-dark mb-3">
       <app-pie-chart [dados]="pieChart" [colors]="colors"></app-pie-chart>
       <div class="card-body">
-        <h5 class="card-title text-center">Proporção de Eventos</h5>
+        <h5 class="card-title text-center">{{configs.Charts[3].Title}}</h5>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
     <div class="card text-white border-info bg-dark mb-3">
       <app-line-chart [dados]="lineChart" [tipos]="nomesLinhas" [axisNames]="axisNamesLine" [colors]="colors"></app-line-chart>
       <div class="card-body">
-        <h5 class="card-title text-center">Distribuição dos Eventos ao longo do tempo</h5>
+        <h5 class="card-title text-center">{{configs.Charts[1].Title}}</h5>
       </div>
     </div>
   </div>
@@ -55,7 +55,7 @@
     <div class="card text-white border-info bg-dark mb-3">
       <app-bullet-chart [dados]="bulletChart" [axisNames]="axisNamesBullet" [colors]="colors" [height]="bulletHeight"></app-bullet-chart>
       <div class="card-body">
-        <h5 class="card-title text-center">Tempo Médio Gasto</h5>
+        <h5 class="card-title text-center">{{configs.Charts[2].Title}}</h5>
       </div>
     </div>
   </div>

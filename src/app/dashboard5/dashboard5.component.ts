@@ -67,8 +67,8 @@ export class Dashboard5Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.group1Data = await this._dados.obtemDados(this.queryGroup1);
-    this.group2Data = await this._dados.obtemDados(this.queryGroup2);
+    this.group1Data = await this._dados.getDataSinglePageDash(this.queryGroup1);
+    this.group2Data = await this._dados.getDataSinglePageDash(this.queryGroup2);
     console.log(this.group2Data);
   }
 

@@ -32,6 +32,7 @@ export class Dashboard4Component implements OnChanges {
   private colors:any[];
   private startTime;
   private endTime;
+  public configs:any[];
 
   constructor(private _dados: DadosService, private _tooltip: TooltipService) {
     this.cardsAjust();
@@ -45,6 +46,8 @@ export class Dashboard4Component implements OnChanges {
   }
 
   private async obDados(){
+    this.configs = this._dados.getDashConfig(0);
+    console.log(this.configs);
     await this.obtemDados();
     this._dados.closeConnection();
 
@@ -59,7 +62,8 @@ export class Dashboard4Component implements OnChanges {
   }
 
   private async obtemDados(){
-    this.clientsData = await this._dados.obtemDados("match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados");    
+    //@ts-ignore
+    this.clientsData = await this._dados.obtemDados(this.configs.Query);    
   }
 
   private cardsAjust(){
@@ -88,11 +92,14 @@ export class Dashboard4Component implements OnChanges {
     medEvents /= cardValue;
     medCoherence = this._tooltip.getAverageCoherence(this.clientsData);
     medTime = this.calcMedTime();
-
-    this.cardAjust("Usuários", (cardExtra), " usuários com Coerência >= 60%", (cardValue-cardExtra) + "", " usuários com Menor que 60% ", 1);
-    this.cardAjust("Eventos", (medEvents).toFixed(2), "Média de Eventos por usuário", this.calcDeviationEvents(medEvents, cardValue).toFixed(2), " de Desvio Padrão ",2);
-    this.cardAjust("Tempo Total", (medTime).toFixed(2)+" minutos"," de Média por usuário", this.calcDeviationTime(medTime, cardValue).toFixed(2), " de Desvio Padrão ", 3);
-    this.cardAjust("Coerência por usuário", (medCoherence*100).toFixed(2)+"%", " de Média", (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2) + "%", " de Desvio Padrão", 4);
+    //@ts-ignore
+    this.cardAjust(this.configs.Cards[0].Title , (cardExtra), this.configs.Cards[0].Text_1, (cardValue-cardExtra) + "", this.configs.Cards[0].Text_2, 1);
+    //@ts-ignore
+    this.cardAjust(this.configs.Cards[1].Title, (medEvents).toFixed(2), this.configs.Cards[1].Text_1, this.calcDeviationEvents(medEvents, cardValue).toFixed(2), this.configs.Cards[1].Text_2,2);
+    //@ts-ignore
+    this.cardAjust(this.configs.Cards[2].Title, (medTime).toFixed(2), this.configs.Cards[2].Text_1, this.calcDeviationTime(medTime, cardValue).toFixed(2), this.configs.Cards[2].Text_2, 3);
+    //@ts-ignore
+    this.cardAjust(this.configs.Cards[3].Title, (medCoherence*100).toFixed(2), this.configs.Cards[3].Text_1, (this.calcDeviationCoherence(medCoherence, cardValue)*100).toFixed(2), this.configs.Cards[3].Text_2, 4);
     
   }
 
@@ -119,20 +126,25 @@ export class Dashboard4Component implements OnChanges {
     this.axisNamesArea = [];
     this.axisNamesBullet = [];
     this.axisNamesLine = [];
-
-    this.axisNamesArea.push("Tempo");
-    this.axisNamesArea.push("Média de eventos por usuários");
-
-    this.axisNamesBullet.push("Tempo (minutos)");
-    this.axisNamesBullet.push("Tipo");
+    //@ts-ignore
+    this.configs.Charts[0].Legends.forEach(element => {
+      this.axisNamesArea.push(element.Value);
+    });
     
-    this.axisNamesLine.push("Tempo");
-    this.axisNamesLine.push("Eventos");
-    
+    //@ts-ignore
+    this.configs.Charts[1].Legends.forEach(element => {
+      this.axisNamesLine.push(element.Value);
+    });
+
+    //@ts-ignore
+    this.configs.Charts[2].Legends.forEach(element => {
+      this.axisNamesBullet.push(element.Value);
+    });
+
     this.colors = [];
-    this.colors.push("#F1C40F");
-    this.colors.push("#2980B9");
-    this.colors.push("#2ECC71");
+    this._dados.getColorsConfig().forEach(element => {
+      this.colors.push(element.Value);
+    });
   }
 
   private bulletAjust(){
@@ -161,13 +173,14 @@ export class Dashboard4Component implements OnChanges {
     med = timePlus/contPlus;
     med += timeMinus/contMinus;
     med /= 2;
-
-    obj.push("Coerência >= 60%");
+    //@ts-ignore
+    obj.push(this.configs.Charts[2].Text[0].Value);
     obj.push(timePlus/contPlus);
     this.bulletChart.push(obj);
 
     obj = [];
-    obj.push("Coerência < 60%");
+    //@ts-ignore
+    obj.push(this.configs.Charts[2].Text[1].Value);
     obj.push(timeMinus/contMinus);
     this.bulletChart.push(obj);
 
@@ -189,14 +202,16 @@ export class Dashboard4Component implements OnChanges {
       else
         contMinus ++;
     }); 
-    
-    obj.push("Mais de 60%");
+
+    //@ts-ignore
+    obj.push(this.configs.Charts[3].Text[0].Value);
     obj.push(contPlus);
 
     this.pieChart.push(obj);
     obj = [];
 
-    obj.push("Menos de 60%");
+    //@ts-ignore
+    obj.push(this.configs.Charts[3].Text[1].Value);
     obj.push(contMinus);
 
     this.pieChart.push(obj);
@@ -259,8 +274,10 @@ export class Dashboard4Component implements OnChanges {
     });
 
     this.areasNames = [];
-    this.areasNames.push("Mais de 60% de coerência");
-    this.areasNames.push("Menos de 60% de coerência");
+    //@ts-ignore
+    this.configs.Charts[0].Text.forEach(element => {
+      this.areasNames.push(element.Value);
+    });
 
     this.areaChart = areas;
   }
@@ -270,9 +287,10 @@ export class Dashboard4Component implements OnChanges {
     var dateAux;
     this.lineChart = [];
 
-    this.nomesLinhas.push("Mais de 60% de coerência");
-    this.nomesLinhas.push("Menos de 60% de coerência");
-    this.nomesLinhas.push("Média");
+    //@ts-ignore
+    this.configs.Charts[1].Text.forEach(element => {
+      this.nomesLinhas.push(element.Value);
+    });
     
     for(var i = this.startTime.getTime(); i <= this.endTime.getTime(); i += 60000){//Percorre criando os espaços que conterão eixo x e valores do y
       dateAux = new Date(i);

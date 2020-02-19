@@ -2,34 +2,34 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject} from'rxjs'
 import { AngularNeo4jService } from 'angular-neo4j';
 import * as d3 from 'd3';
+import configs from './../assets/configs.json';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DadosService {
-
-  private dados = new BehaviorSubject("");
-  dadoAtual = this.dados.asObservable();
   
+  //Declaration of the variables for Neo4j
   private query;
   private url = 'bolt://footstep.io::7687';
   private username = 'neo4j';
   private password = 'senha';
   private encrypted = false;
 
-  private clientsData:any[] = [];
-  private dadosClientes:any[] = [];
-  private dadosQuestionarios:any[] = [];
+  //Declaration of the variables necessaries
+  private ajustedData:any[] = [];
+  private receivedData:any[] = [];
+  private questionaryData:any[] = [];
   private eventsQuery: string = "";
+  private dashsInfo: any[] = [];
 
-  constructor(private neo4j: AngularNeo4jService) { }
-
-  mudaDados(dadoNovo: any){
-    this.dados.next(dadoNovo);
+  constructor(private neo4j: AngularNeo4jService) {
+    this.dashsInfo = configs;
   }
   
-  async getDados(consulta:string){
-    this.query = consulta;
+  //Get the data from the Neo4j passing the query
+  public async getDBData(query:string){
+    this.query = query;
     var response;
     await this.neo4j
         .connect(
@@ -41,124 +41,128 @@ export class DadosService {
         .then(driver => {
           if (driver) {}
         });
+
         try{
           response = this.neo4j.run(this.query);
         }catch(err){
           console.log(err);
-        }finally{
-          //this.neo4j.disconnect();
         }
+
     return response;
   }
 
-  closeConnection(){
+  //Close the connection openned on getData
+  public closeConnection(){
     this.neo4j.disconnect();
   }
 
-  async obtemDados(query:string){
+  //Method used by the single page dash to get the data
+  public async getDataSinglePageDash(query:string){
 
     if(this.eventsQuery == query)
-      return this.clientsData;
+      return this.ajustedData;
     
     this.eventsQuery = query;
-    this.dadosClientes = await this.getDados(this.eventsQuery);
-    await this.leituraRespostasQuestionario();
-    await this.leituraEventos();
-    return this.clientsData;
+    this.receivedData = await this.getDBData(this.eventsQuery);
+    await this.getQuestionary();
+    await this.getQuestionaryAnswers();
+    return this.ajustedData;
   }
 
-  private async leituraRespostasQuestionario(){
-    var objects:any[] = [];
-    var obj;
-    await d3.csv("../../assets/areasForm.csv").then((data)=> {//Le o csv
-      data.forEach(element => {//para cada elemento vindo do csv ira
+  //Get the configuration by the informed dash
+  public getDashConfig(dash) {
+    //@ts-ignore
+    return this.dashsInfo.Dashs[dash];
+  }
+
+  //Get the colors in the config files
+  public getColorsConfig() {
+    //@ts-ignore
+    return this.dashsInfo.Colors;
+  }
+
+
+  //Get the correct answers about the questionary
+  private async getQuestionary(){
+    var objects:any[] = [], obj;
+    
+    await d3.csv("../../assets/areasForm.csv").then((data)=> {//Read CSV
+      data.forEach(element => {//For each CSV element, it will create a object, containing the properties of the CSV
         obj = new Object();
         obj["AreaAtuacao"] = element.AreaAtuacao;
-        obj["Area"] = this.particionaPalavra(element.Area, ";");
-        obj["Technology"] = this.particionaPalavra(element.Technology, ";");
-        obj['Client'] = this.particionaPalavra(element.Client, ";");
-        obj["Perfil"] = this.particionaPalavra(element.Perfil, ";");
+        obj["Area"] = element.Area.split(";");
+        obj["Technology"] = element.Technology.split(";");
+        obj['Client'] = element.Client.split(";");
+        obj["Perfil"] = element.Perfil.split(";");
         objects.push(obj);  
       }); 
     });
-    this.dadosQuestionarios = objects;
-    //console.log(objects);
+
+    this.questionaryData = objects;
   }
 
-  private async leituraEventos(){
-    this.clientsData = new Array();
+  //Get the questionary answers 
+  private async getQuestionaryAnswers(){
+    this.ajustedData = new Array();
     var obj, i = 0;
-    await d3.csv("../../assets/form.csv").then((data)=> {//Le o csv
-      data.forEach(element => {//para cada elemento vindo do csv ira
-        //replace(/[\\"]/g, ''); possivel necessidade disso depois
-        var array = this.separaEventosArea(element.Name);
+    await d3.csv("../../assets/form.csv").then((data)=> {//Read tue CSV
+      data.forEach(element => {//For each CSV element, it will create a object
+        var array = this.separateEventsArea(element.Name);//Make an array with the time in the element desired and time out
+
         if(array != null){
-          obj = new Object();
-          obj["Time"] = element.Timestamp;
-          obj["Name"] = element.Name;
-          obj["Area"] = this.particionaPalavra(element.Area, ";");
-          //obj["Technology"] = this.particionaPalavra(element.Technology, ";");
-          //obj["Client"] = this.particionaPalavra(element.Client, ";");
-          //obj["Perfil"] = this.particionaPalavra(element.Perfil, ";");
-          obj["EventArea"] = array;
-          obj["Coherence"] = this.classificaQuestoes(array, obj["Area"], this.particionaPalavra(element.Technology, ";"),this.particionaPalavra(element.Client, ";"), this.particionaPalavra(element.Perfil, ";"));
-          obj["CoherenceValue"] = this.calcCoherence(obj["Coherence"]);
-          obj["InfoEvents"] = this.info_events(obj["Name"]);
-          this.clientsData.push(obj);
+          obj = new Object();//Create a object for each user
+          obj["Time"] = element.Timestamp;//Add the time of the answear
+          obj["Name"] = element.Name;//The name of the user
+          obj["Area"] = element.Area.split(";");//The areas entered
+          obj["EventArea"] = array;//The events it self, time in, out and the area accessed
+          obj["Coherence"] = this.classifyQuestions(array, obj["Area"], element.Technology.split(";"), element.Client.split(";"), element.Perfil.split(";"));//get the coherence for each area
+          obj["CoherenceValue"] = this.calcCoherence(obj["Coherence"]);//Get the total coherence
+          obj["InfoEvents"] = this.info_events(obj["Name"]);//Get all events, including the ones without a direct relation to the objective
+
+          this.ajustedData.push(obj);
           i++;
         }
       }); 
     });
   }
 
-  private particionaPalavra(palavra:string, split:string){
-    var stringSplit: string[] = palavra.split(split);
-    var item:string[] = [];
-    stringSplit.forEach(element => {
-      item.push(element);
-    });
-    return item;
-  }
-
-  private separaEventosArea(clientName: string){
-    var events:any[] = []
-    var i, j, tamanhoClientes = this.dadosClientes.length, tamanhoEventos;
-    var inicio = "", fim = "";
-    var obj, element;
-    for(j = 0; j < tamanhoClientes; j++)
-      if(this.dadosClientes[j][0].includes(clientName))
+  //Separate the events of the specified client
+  private separateEventsArea(clientName: string){
+    var events:any[] = [], start = "", end = "", obj, element;
+    var i, j, clientsLength = this.receivedData.length, eventsLength;
+    
+    for(j = 0; j < clientsLength; j++)
+      if(this.receivedData[j][0].includes(clientName))
         break;
     
-    if(j == tamanhoClientes)
+    if(j == clientsLength)
       return null;
 
-    //for(var j = 0; j < tamanhoClientes; j++){
-      element = this.dadosClientes[j][1];
-      tamanhoEventos = element.length;
-      //console.log(element + " Tamanho: "+ tamanhoEventos);
-      for(i = 0; i < tamanhoEventos; i++){
-        obj = new Object();
-        if(inicio == "" && element[i][1].includes("portfolio") && i+1 < tamanhoEventos && this.dadosClientes[j][1][i+1][1].includes("Modal"))
-          inicio = element[i][0];
-        
-        if(inicio != "" && element[i][1].includes("Modal")){
-          if(i+1 > tamanhoEventos || (i+1 < tamanhoEventos && !this.dadosClientes[j][1][i+1][1].includes("Modal"))){
-            fim = element[i][0];
-            obj["inicio"] = inicio;
-            obj["fim"] = fim;
-            obj["area"] = this.convertModal_Area(element[i][1]);
-            
-            events.push(obj);
-            inicio = ""; 
-          }
+    element = this.receivedData[j][1];
+    eventsLength = element.length;
+    
+    for(i = 0; i < eventsLength; i++){
+      obj = new Object();
+      if(start == "" && element[i][1].includes("portfolio") && i+1 < eventsLength && this.receivedData[j][1][i+1][1].includes("Modal"))
+      start = element[i][0];
+      
+      if(start != "" && element[i][1].includes("Modal")){
+        if(i+1 > eventsLength || (i+1 < eventsLength && !this.receivedData[j][1][i+1][1].includes("Modal"))){
+          end = element[i][0];
+          obj["inicio"] = start;
+          obj["fim"] = end;
+          obj["area"] = this.convertObjective(element[i][1], 0);//originally it was convertModal_Area
+          events.push(obj);
+          start = ""; 
         }
-      //}
+      }
     }
 
     return events;
   }
 
-  private convertModal_Area(modal:string){
+  //Given the element, it will return the representation name
+  private convertModal_Area(modal:string, type=0){
     if(modal.includes("Modal1"))
       return "Embarcados";
     else if(modal.includes("Modal2"))
@@ -173,22 +177,31 @@ export class DadosService {
       return "Servidores";
   }
 
-  private classificaQuestoes(events, area, tech, client, perfil){
-    var areasAcessadas:string[] = [];
+  private convertObjective(modal:string, type=0){
+    //@ts-ignore
+    this.dashsInfo.Objectives[type].Values.forEach(element => {
+      if(modal.includes(element.Name))
+        return element.ConvertTo;
+    });
+  }
+
+  //Classify the answers provided by the user
+  private classifyQuestions(events, area, tech, client, perfil){
+    var accessedAreas:string[] = [];
     var chosenAreas:any[] = [];
     var i, obj;
 
-    events.forEach(element => {//obtem os nomes das areas acessadas nos eventos para o comparativo
-      if(!areasAcessadas.includes(element.area))
-        areasAcessadas.push(element.area);
+    events.forEach(element => {//get the accessed areas name's from the events for a comparative
+      if(!accessedAreas.includes(element.area))
+      accessedAreas.push(element.area);
     });
 
-    area.forEach(element =>{//irá percorrer as areas selecionadas no questionário
+    area.forEach(element =>{//goes through the selected areas in the answers
       i = 0;
-      if(areasAcessadas.includes(element))//se houver relação das áreas selecionadas com as que ele acessou, adiciona 1 senão 0
+      if(accessedAreas.includes(element))//if there's a relation between the choosen in the questionary and accessed areas, add 1 if not add 0
         i = 1;
 
-      obj = new Object();//Criar um vetor de objetos que contém todas as áreas e coerências dessas áreas, começa a prenche-lo com as áreas
+      obj = new Object();//create an array of objects that contains all the areas and coherence
       obj["area"] = element;
       obj['coherenceArea'] = i;
       obj["coherenceTech"] = 0;
@@ -197,19 +210,19 @@ export class DadosService {
       chosenAreas.push(obj);
     });
 
-    chosenAreas.forEach(element => {//para cada área irá obter a coerência com relação as respostas
-      this.dadosQuestionarios.forEach(data=>{//Percorre os dados que dizem respeito a página, com relação a área e clientes/tecnologias/perfil
+    chosenAreas.forEach(element => {//for each area it will calculate the coherence
+      this.questionaryData.forEach(data=>{
         if(data["Area"].includes(element["area"])){
           i = 0;
-          data["Technology"].forEach(element => {//Se perceber que a tecnologia que escolheu está nas da área irá incrementa o acerto
+          data["Technology"].forEach(element => {//If the choosen technology is in the accessed areas, increase the coherence 
             if(tech.includes(element))
               i++;
           });
 
-          element["coherenceTech"] = i/data["Technology"].length;//Após analisar todos irá calcular a coerencia
+          element["coherenceTech"] = i/data["Technology"].length;//After analyze everyone it will calculate the coherence
           i = 0;
 
-          data["Client"].forEach(element => {//repete o processo para os demais
+          data["Client"].forEach(element => {//repeat the process for the others
             if(client.includes(element))
               i++;
           });
@@ -230,10 +243,11 @@ export class DadosService {
     return chosenAreas;
   }
 
+  //Calculate the coherence, of the given areas
   private calcCoherence(chosenAreas){
     var coherence = 0;
 
-    chosenAreas.forEach(element => {
+    chosenAreas.forEach(element => {//Assigns weights to the questions
       coherence += element["coherenceArea"] * 0.2;
       coherence += element["coherenceTech"] * 0.3;
       coherence += element["coherenceClient"] * 0.2;
@@ -244,17 +258,18 @@ export class DadosService {
     return coherence;
   }
 
+  //Assign the time of the first and last event, the total of events, and the events it self
   private info_events(clientName: string){
-    var j, tamanhoClientes = this.dadosClientes.length, length = 0;
+    var j, clientsLength = this.receivedData.length, length = 0;
     var obj = new Object();
-    for(j = 0; j < tamanhoClientes; j++)
-      if(this.dadosClientes[j][0].includes(clientName))
+    for(j = 0; j < clientsLength; j++)
+      if(this.receivedData[j][0].includes(clientName))
         break;
-    length = this.dadosClientes[j][1].length;
+    length = this.receivedData[j][1].length;
 
-    obj["firstEvent"] = this.dadosClientes[j][1][0][0];
-    obj["lastEvent"] = this.dadosClientes[j][1][length-1][0];
-    obj["Events"] = this.dadosClientes[j][1];
+    obj["firstEvent"] = this.receivedData[j][1][0][0];
+    obj["lastEvent"] = this.receivedData[j][1][length-1][0];
+    obj["Events"] = this.receivedData[j][1];
     obj["eventsQuantity"] = length;
     
     return obj;
@@ -262,21 +277,23 @@ export class DadosService {
 
 
   //---------------------SECTION OF FATEC DASHBOARDS------------------------------
+  //Get the events of the dashboard about multi pages
   public async getEventsFatec(query:string){
 
     if(this.eventsQuery == query)
-      return this.clientsData;
+      return this.ajustedData;
     
     this.eventsQuery = query;
-    this.dadosClientes = await this.getDados(this.eventsQuery);
-    await this.readEventsFatec();
-    return this.clientsData;
+    this.receivedData = await this.getDBData(this.eventsQuery);
+    await this.getMultiPagesEvents();
+    return this.ajustedData;
   }
 
-  private async readEventsFatec(){
-    this.clientsData = new Array();
+  //Ajust the events for each client
+  private async getMultiPagesEvents(){
+    this.ajustedData = new Array();
     var obj, arr:any = [];
-    this.dadosClientes.forEach(element => {
+    this.receivedData.forEach(element => {
       arr = this.divideEvents(element[1])
       obj = new Object();
       obj["Name"] = element[0];
@@ -284,16 +301,16 @@ export class DadosService {
       obj["Events"] = arr;
       obj["TotalTime"] = this.getTotalTime(arr);
       obj["TotalEvents"] = element[1].length;
-      this.clientsData.push(obj);
+      this.ajustedData.push(obj);
       
     });
-    console.log(this.clientsData);
   }
 
+  //Get the name of the accessed pages
   private getPages(elements: any[]){
     var pages:string[] = [], page;
     elements.forEach(element => {
-      page = this.convert_page_name(element[1]);
+      page = this.convertObjective(element[1], 1);//orignally wass convert_page_name
       if (!pages.includes(page))
         pages.push(page);
 
@@ -302,6 +319,7 @@ export class DadosService {
     return pages;
   }
 
+  //Get the total time spent on the website
   private getTotalTime(elements: any[]){
     var time = 0;
     var data1, data2;
@@ -316,6 +334,7 @@ export class DadosService {
     return time;
   }
 
+  //Given the events of the user, it will separate a way that make easier to manipulate
   private divideEvents(clientData: any[]){
     var events:any[] = []
     var i, j;
@@ -328,7 +347,7 @@ export class DadosService {
           j = 1;
           break;
         }
-            
+      //j = -1 means that the events happened on the same day, j = 1, means the events happened in different days   
       if(j == -1){
         obj = new Object();
         data = element[0].split(":");
@@ -336,7 +355,7 @@ export class DadosService {
         obj["EventsData"] = [];
         obj["EventsData"].push(element);
         events.push(obj);
-      }else
+      }else//
         events[i]["EventsData"].push(element);
          
     });
@@ -344,6 +363,7 @@ export class DadosService {
     return events;
   }
 
+  //Get name of the page by the url
   private convert_page_name(pag:string){
     if(pag.includes("cart"))
       return "Cart";
