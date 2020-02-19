@@ -5,10 +5,8 @@ import { AngularNeo4jModule } from 'angular-neo4j';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BulletChartComponent } from './bullet-chart/bullet-chart.component';
 import {DadosService} from './dados.service';
 import {TooltipService} from './tooltip.service';
-import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
 import { TableComponent } from './table/table.component';
 import { CardComponent } from './card/card.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -41,8 +39,6 @@ import { ChartAreaComponent } from './chart-area/chart-area.component';
 @NgModule({
   declarations: [
     AppComponent,
-    BulletChartComponent,
-    BubbleChartComponent,
     TableComponent,
     CardComponent,
     NavComponent,
