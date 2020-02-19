@@ -1,0 +1,32 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard1" routerLinkActive="active">Dash Single General</a>
+      <a mat-list-item routerLink="/dashboard2" routerLinkActive="active">Dash Single Comparative</a>
+      <a mat-list-item routerLink="/dashboard3" routerLinkActive="active">Dash Single Focal</a>
+      <a mat-list-item routerLink="/dashboard4" routerLinkActive="active">Dash Single Details</a>
+      <a mat-list-item routerLink="/dashboard5" routerLinkActive="active">Dash Multi General</a>
+      <a mat-list-item routerLink="/dashboard6" routerLinkActive="active">Dash Multi Comparative</a>
+      <a mat-list-item routerLink="/dashboard7" routerLinkActive="active">Dash Multi Focal</a>
+      <a mat-list-item routerLink="/dashboard8" routerLinkActive="active">Dash Multi Details</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar>
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>TrackView</span>
+    </mat-toolbar>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

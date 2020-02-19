@@ -1,0 +1,68 @@
+
+<div class="row" style="max-width: 88rem;">
+  <div class="col-sm-6 col-md-6 col-lg-6">
+    <h1 class="text-center">
+    <select class="text-info select-title" (change)="onChange($event)">
+      <option class="text-info" *ngFor = "let area of areasTitle">{{area}}</option>
+    </select>
+    </h1>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6">
+    <div class="btn-group">
+      <button type="button" clicked="true" class="btn text-info border-info bg-dark">Hoje</button>
+      <button type="button" class="btn text-info border-info bg-dark">Este Mês</button>
+      <button type="button" class="btn text-info border-info bg-dark">Este Ano</button>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-3 col-lg-3">
+    <app-card [strings]="card1"></app-card>
+  </div>
+  <div class="col-sm-6 col-md-3 col-lg-3">
+    <app-card [strings]="card2"></app-card>
+  </div>
+  <div class="col-sm-6 col-md-3 col-lg-3">
+    <app-card [strings]="card3"></app-card>
+  </div>
+  <div class="col-sm-6 col-md-3 col-lg-3">
+    <app-card [strings]="card4"></app-card>
+  </div>
+  
+  <div class="col-sm-12 col-md-7 col-lg-7">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-chart-area [data]="areaChart" [axisNames]="axisNamesArea" [colors]="colors" [areasName]="areasNames"></app-chart-area>
+      <div class="card-body">
+        <h5 class="card-title text-center">{{configs.Charts[0].Title}}</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-10 col-md-5 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-chart-pie [data]="pieChart" [colors]="colors"></app-chart-pie>
+      <div class="card-body">
+        <h5 class="card-title text-center">{{configs.Charts[3].Title}}</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12 col-md-7 col-lg-7">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-chart-line [data]="lineChart" [types]="lineNames" [axisNames]="axisNamesLine" [colors]="colors"></app-chart-line>
+      <div class="card-body">
+        <h5 class="card-title text-center">{{configs.Charts[1].Title}}</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-10 col-md-7 col-lg-5">
+    <div class="card text-white border-info bg-dark mb-3">
+      <app-chart-bullet [data]="bulletChart" [axisNames]="axisNamesBullet" [colors]="colors" [height]="bulletHeight"></app-chart-bullet>
+      <div class="card-body">
+        <h5 class="card-title text-center">{{configs.Charts[2].Title}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

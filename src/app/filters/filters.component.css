@@ -1,0 +1,21 @@
+mat-form-field {
+    margin-right: 12px;
+  }
+
+  ::-webkit-input-placeholder {
+    color: peachpuff;
+    font-size: 13px;
+  }
+  ::-moz-placeholder {
+    color: peachpuff;
+    font-size: 13px;
+  }
+  :-ms-input-placeholder {
+    color: peachpuff;
+    font-size: 13px;
+  }
+  ::placeholder {
+    color: peachpuff;
+    font-size: 13px;
+  }
+  
