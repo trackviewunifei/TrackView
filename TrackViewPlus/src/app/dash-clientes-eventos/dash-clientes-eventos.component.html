@@ -1,0 +1,28 @@
+<div class="row" style="max-width: 88rem;">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <h1 class="text-info text-center">{{configs.Title}}</h1>
+    </div>
+    
+    <div class="col-sm-6 col-md-4 col-lg-4">
+        <app-card [strings]="card1"></app-card>
+    </div>
+    
+    <div class="col-sm-6 col-md-4 col-lg-4">
+        <app-card [strings]="card2"></app-card>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-4">
+        <app-card [strings]="card3"></app-card>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="text-info card text-white border-info ">
+            <app-chart-line [data]="lineChart" [types]="lineNames" [axisNames]="axisNamesLine" [colors]="colors">
+            </app-chart-line>
+            <div class="card-body">
+                <h5 class="card-title text-center">{{configs.Charts[1].Title}}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,1069 @@
+{
+    "Dashs":
+    [
+        {
+            "_id": 1,
+            "Name": "Dash Single Page General", 
+            "Title": "Clientes",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Usuários",
+                    "Text_1": " Usuários com Coerência >= 60%",
+                    "Text_2": " Usuários menor com Coerência < 60%"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " Média de Eventos por usuário",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Tempo Total",
+                    "Text_1": " Minutos de Média por usuário",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Coerência por Usuário",
+                    "Text_1": " de Média",
+                    "Text_2": "% de Desvio Padrão"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos para os grupos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Mais que 60% de Coerência"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Menos que 60% de Coerência"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos ao Longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Mais que 60% de Coerência"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Menos que 60% de Coerência"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Gasto",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Coerência >= 60%"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Coerência < 60%"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Proporção de Eventos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Mais de 60%"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Menos de 60%"
+                        }
+                    ],
+                    "Legends":
+                    []
+                }
+            ]
+        },
+        {
+            "_id": 2,
+            "Name": "Dash Single Page Comparative", 
+            "Title": "COM220 e COM242",
+            "Query": [
+                "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+                "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados"
+            ],
+            "QueryOriginal": 
+            [
+                "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados",
+                "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-11-01' and e.date_str >= '2019-10-31T18' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados"
+            ],
+            "Cards":
+            [
+                {
+                    "Title": "Distribuição dos Usuários",
+                    "Text_1": " Usuários COM220",
+                    "Text_2": " Usuários COM242"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " de Média para COM220",
+                    "Text_2": " de Média para COM242"
+                },
+                {
+                    "Title": "Tempo Total",
+                    "Text_1": " Minutos de Média por COM220",
+                    "Text_2": " Minutos de Média por COM242"
+                },
+                {
+                    "Title": "Coerência para os Grupos",
+                    "Text_1": " de Média para COM220",
+                    "Text_2": " de Média para COM242"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos ao Longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"COM220"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"COM242"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos para os Grupos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"COM220"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"COM242"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Médio Gasto nas áreas de atuação",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"COM220"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"COM242"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-radar",
+                    "Title": "Comparativo entre COM220 e COM242",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"COM220"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"COM242"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Média de Coerência",
+                            "Position": "Top"
+                        },
+                        {
+                            "Value":"Média de Eventos pelo Tempo",
+                            "Position": "Right"
+                        },
+                        {
+                            "Value":"Tempo Médio",
+                            "Position": "Bottom"
+                        },
+                        {
+                            "Value":"Média de Páginas Acessadas",
+                            "Position": "Left"
+                        }
+                    ]
+                }
+            ],
+            "Objectives":
+            {
+                "Type":"Single-Page",
+                "":""
+            }
+            
+        },
+        {
+            "_id": 3,
+            "Name": "Dash Single Page Focal Point", 
+            "Title": "Áreas",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Coerência",
+                    "Text_1": "% em Média por Área",
+                    "Text_2": "% de Desvio Padrão"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " em Média por Área",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Tempo Total na Área",
+                    "Text_1": " Minutos em Média por Área",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Escolha no Formulário",
+                    "Text_1": " escolhas de Áreas em Média",
+                    "Text_2": " de Desvio Padrão"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-bar",
+                    "Title": "Tempo Médio de cada Área",
+                    "Legends":
+                    [
+                        {
+                            "Value":"Áreas",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tempo Médio por Cliente",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Coerência das Áreas",
+                    "Legends":
+                    [
+                        {
+                            "Value":"Coerência",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Áreas",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Representatividade das Áreas no formulário"
+                },
+                {
+                    "Name": "chart-donut",
+                    "Title": "Representividade das Áreas nos Eventos"
+                }
+            ]
+        },
+        {
+            "_id": 4,
+            "Name": "Dash Single Page Details", 
+            "Title": "",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where e.date_str <= '2019-10-02T18' and e.date_str >= '2019-10-02T16' and p.id = 'guilheeeeeeerme.github.io/footstep' return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Usuários",
+                    "Text_1": " Escolheram essa Área",
+                    "Text_2": " Média das demais"
+                },
+                {
+                    "Title": "Representatividade",
+                    "Text_1": "% do Total das Escolhas",
+                    "Text_2": "% do Total dos Acessos"
+                },
+                {
+                    "Title": "Coerência",
+                    "Text_1": "% de Coerência nesse Área",
+                    "Text_2": "% Coerência Média"
+                },
+                {
+                    "Title": "Interesse",
+                    "Text_1": "% de Conversão nessa Área",
+                    "Text_2": "% de Conversão Média"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos ao Longo do Tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Demais Áreas"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos ao Longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Demais Áreas"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Médio Gasto",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Média das demais áreas"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Proporção de Eventos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Demais Áreas"
+                        }
+                    ],
+                    "Legends":
+                    []
+                }
+            ]
+        },
+        {
+            "_id": 5,
+            "Name": "Dash Multi Page General", 
+            "Title": "Clientes x Eventos",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-05' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Usuários",
+                    "Text_1": " Usuários que Convergiram",
+                    "Text_2": " Usuários durante o período"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " Média de Eventos por usuário",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Tempo Total",
+                    "Text_1": " Minutos de Média por usuário",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Conversão",
+                    "Text_1": "% dos Usuários",
+                    "Text_2": " Média de Páginas Acessadas"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos ao longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Convergiram"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Usuários"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (dias)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos ao Longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 2,
+                            "Value":"Eventos"
+                        },
+                        {
+                            "Order": 1,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (dias)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Médio Gasto",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Convergiram"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Usuários"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Proporção de Eventos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Convergiram"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Não Convergiram"
+                        }
+                    ],
+                    "Legends":
+                    []
+                }
+            ]
+        },
+        {
+            "_id": 6,
+            "Name": "Dash Multi Page Comparative", 
+            "Title": "Comparação de reincidência no site",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-05' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Usuários",
+                    "Text_1": " Usuários que não voltaram",
+                    "Text_2": " Usuários que voltaram"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " de Média de Eventos para G1",
+                    "Text_2": " de Média de Eventos para G2"
+                },
+                {
+                    "Title": "Tempo Total",
+                    "Text_1": " Minutos de Média para G1",
+                    "Text_2": " Minutos de Média para G2"
+                },
+                {
+                    "Title": "Conversão",
+                    "Text_1": " de Conversão para G1",
+                    "Text_2": " de Conversão para G2"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos para os Grupos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"G1 (Não Reincindiu)"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"G2 (Reincindiu)"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos para os Grupos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"G1 (Não Reincindiu)"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"G2 (Reincindiu)"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Médio Gasto nas Páginas",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"G1 (Não Reincindiu)"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"G2 (Reincindiu)"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-radar",
+                    "Title": "Comparativo entre os Grupos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Convergiu"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Não Convergiu"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Média de Conversão",
+                            "Position": "Top"
+                        },
+                        {
+                            "Value":"Média de Eventos pelo Tempo",
+                            "Position": "Right"
+                        },
+                        {
+                            "Value":"Tempo Médio",
+                            "Position": "Bottom"
+                        },
+                        {
+                            "Value":"Média de Páginas Acessadas",
+                            "Position": "Left"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "_id": 7,
+            "Name": "Dash Single Multi Focal Point", 
+            "Title": "Estrutura de Páginas",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-05' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Clientes",
+                    "Text_1": " Usuários por Página (Média)",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " em Média por Página",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Tempo Total",
+                    "Text_1": " Minutos em Média por Página",
+                    "Text_2": " de Desvio Padrão"
+                },
+                {
+                    "Title": "Páginas",
+                    "Text_1": " Páginas por Usuários (Média)",
+                    "Text_2": " de Desvio Padrão"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-bar",
+                    "Title": "Número de Eventos por Página",
+                    "Legends":
+                    [
+                        {
+                            "Value":"Eventos",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Páginas",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Número de Clientes por Página",
+                    "Legends":
+                    [
+                        {
+                            "Value":"Páginas",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Clientes",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Representatividade das Páginas na Conversão"
+                },
+                {
+                    "Name": "chart-donut",
+                    "Title": "Representividade das Páginas nos Eventos"
+                }
+            ]
+            
+        },
+        {
+            "_id": 8,
+            "Name": "Dash Multi Page Details", 
+            "Title": "",
+            "Query": "match (u:Event) with u.event_client_id as cliente, u.event_date_str as data, u order by data WHERE u.element_tag_classes <> '' and u.element_id <> '' return cliente, collect([data, u.element_id, u.element_tag_classes]) as dados",
+            "QueryOriginal": "match (u:User)-[t:TRIGGERED]->(e:Event)-[i:IN]->(p:Page) match (e:Event)-[o:ON]->(l:Element) with u.client_id as cliente, e.date_str as data, l order by data where p.id =~ '.*fate.*'and  e.date_str <= '2019-11-05' and e.date_str >= '2019-10-22'  return cliente, collect([data, l.id, l.tag_classes]) as dados",
+            "Cards":
+            [
+                {
+                    "Title": "Caminho",
+                    "Text_1": " Usaram no Caminho da Compra",
+                    "Text_2": "% que convergiram passaram"
+                },
+                {
+                    "Title": "Representatividade",
+                    "Text_1": "% dos Usuários Acessaram",
+                    "Text_2": "% de Média para as Demais"
+                },
+                {
+                    "Title": "Eventos",
+                    "Text_1": " Eventos por Acesso",
+                    "Text_2": " Média Eventos por Acesso"
+                },
+                {
+                    "Title": "Conversão",
+                    "Text_1": "% de Média dessa Página",
+                    "Text_2": "% de Média para as Demais"
+                }
+            ],
+            "Charts":
+            [
+                {
+                    "Name": "chart-area",
+                    "Title": "Distribuição das Médias de Eventos ao Longo do Tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Atual"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Demais Páginas"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Média de eventos por usuários",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-line",
+                    "Title": "Distribuição dos Eventos ao Longo do tempo",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Atual"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Demais Páginas"
+                        },
+                        {
+                            "Order": 3,
+                            "Value":"Média"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Eventos",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-bullet",
+                    "Title": "Tempo Médio Gasto",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Atual"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Média das demais Páginas"
+                        }
+                    ],
+                    "Legends":
+                    [
+                        {
+                            "Value":"Tempo (minutos)",
+                            "Position": "horizontal"
+                        },
+                        {
+                            "Value":"Tipo",
+                            "Position": "vertical"
+                        }
+                    ]
+                },
+                {
+                    "Name": "chart-pie",
+                    "Title": "Proporção de Eventos",
+                    "Text":
+                    [
+                        {
+                            "Order": 1,
+                            "Value":"Atual"
+                        },
+                        {
+                            "Order": 2,
+                            "Value":"Demais Páginas"
+                        }
+                    ],
+                    "Legends":
+                    []
+                }
+            ]
+        }
+    ],
+    "Colors":
+    [
+        {
+            "Name":"Yellow",
+            "Value":"#2980B9"
+        },
+        {
+            "Name":"Blue",
+            "Value":"#F1C40F"
+        },
+        {
+            "Name":"Red",
+            "Value":"#E74C3C"
+        },
+        {
+            "Name":"Green",
+            "Value":"#2ECC71"
+        },
+        {
+            "Name":"White",
+            "Value":"#F325A2"
+        },
+        {
+            "Name":"Gray",
+            "Value":"#AEB6BF"
+        }
+    ],
+    "Objectives":
+    [
+        {
+            "Type":"Single-Page",
+            "Values":
+            [
+                {
+                    "Name":"Modal1",
+                    "ConvertTo":"Gaming"
+                },
+                {
+                    "Name":"Modal2",
+                    "ConvertTo":"Robótica"
+                },
+                {
+                    "Name":"Modal3",
+                    "ConvertTo":"Plataformas"
+                },
+                {
+                    "Name":"Modal4",
+                    "ConvertTo":"Realidade Virtual"
+                },
+                {
+                    "Name":"Modal5",
+                    "ConvertTo":"Servidores"
+                },
+                {
+                    "Name":"Modal6",
+                    "ConvertTo":"Embarcados"
+                }
+            ]
+        },
+        {
+            "Type":"Multi-Page",
+            "Values":
+            [
+                {
+                    "Name":"cart",
+                    "ConvertTo":"Carrinho"
+                },
+                {
+                    "Name":"login",
+                    "ConvertTo":"Login"
+                },
+                {
+                    "Name":"checkout",
+                    "ConvertTo":"Checkout"
+                },
+                {
+                    "Name":"oferta",
+                    "ConvertTo":"Oferta"
+                }
+            ]
+        }
+    ]
+}
